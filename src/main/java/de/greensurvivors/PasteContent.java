@@ -4,15 +4,15 @@ import de.greensurvivors.implementation.content.SimpleStringContentWrapper;
 import org.jetbrains.annotations.NotNull;
 
 /// T is NOT nullable!
-public interface PasteContent<T> {
-    T getContent ();
+public interface PasteContent<T> extends Serializable {
+    T getContent();
 
-    Paste.PasteType getPasteType ();
+    @NotNull Paste.PasteType getPasteType ();
 
-    static PasteContent<String> fromString(@NotNull String content) {
+    static @NotNull PasteContent<@NotNull String> fromString(final @NotNull String content) {
         return new SimpleStringContentWrapper(content);
     }
 
     // todo name -> content map
-    // todo deal with encryption
+    // todo deal with decryption
 }

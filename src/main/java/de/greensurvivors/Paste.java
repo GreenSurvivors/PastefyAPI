@@ -14,7 +14,7 @@ public interface Paste<T> {
     @NotNull T getContent();
     @NotNull PasteVisibility getVisibility();
     boolean isEncrypted ();
-    @Nullable Instant getExpiration();
+    @Nullable Instant getExpirationTime();
     @NotNull Collection<String> getTags();
 
     static <T> PasteBuilder<T> newBuilder(@NotNull String title, @NotNull PasteContent<T> content) {

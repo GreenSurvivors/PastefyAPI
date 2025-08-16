@@ -7,20 +7,21 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
 
-public interface PasteBuilder<T> extends Paste<T> {
-    void setTitle(@NotNull String title);
+// sorry for the sealed, but I can't take encryption lightly
+public sealed interface PasteBuilder<T> extends Paste<T> permits de.greensurvivors.implementation.PasteBuilderImpl {
+    PasteBuilder<T> setTitle(@NotNull String title);
 
-    void setContent(@NotNull PasteContent<T> content);
+    PasteBuilder<T> setContent(@NotNull PasteContent<T> content);
 
     PasteContent<T> getPackagedContent();
 
-    void setVisibility(@NotNull PasteVisibility visibility);
+    PasteBuilder<T> setVisibility(@NotNull PasteVisibility visibility);
 
-    void encrypt(byte @Nullable [] password) throws NoSuchAlgorithmException;
+    PasteBuilder<T> encryptWhenSending(byte @Nullable [] password) throws NoSuchAlgorithmException;
 
-    void setExpiration(@Nullable Instant expiration); // note: I have no Idea what timezone they use. Maybe german?? Maybe GMT???
+    PasteBuilder<T> setExpirationTime(@Nullable Instant expirationTime); // note: I have no Idea what timezone they use. Maybe german?? Maybe GMT???
 
-    void setTags(@NotNull Collection<String> tags);
+    PasteBuilder<T> setTags(@NotNull Collection<String> tags);
 
-    void addTag(@NotNull String tag);
+    PasteBuilder<T> addTag(@NotNull String tag);
 }

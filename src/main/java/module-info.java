@@ -3,6 +3,8 @@ open module PastefyAPI.main {
     requires org.jetbrains.annotations;
     requires java.net.http;
     requires org.bouncycastle.provider;
+    requires java.sql;
 
     exports de.greensurvivors;
+    exports de.greensurvivors.exception;
 }

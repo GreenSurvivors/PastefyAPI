@@ -8,8 +8,8 @@ import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PastefyAPITest {
-    private static final String PASSWORD = "S4f³ pÄ?5w°rt";
+public class EncryptionHelperTest {
+    private static final String PASSWORD = "S4f³ pÄ?5w°r|)";
     private static final String CONTENT = "encrypted";
 
     @Test

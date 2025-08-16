@@ -21,9 +21,10 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-// Note: this class is
+// Note: this class is cluttered with links about encryption I have referenced while writing it, and learning about encrypting.
+// Since it's easy to trip and
 // https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409
-public class EncryptionHelper {
+public final class EncryptionHelper {
     private static final int IV_LENGTH_ENCRYPT = 12;
     private static final int TAG_LENGTH_ENCRYPT = 16;
     private static final int ARGON2_ITERATIONS = 10;
@@ -39,7 +40,10 @@ public class EncryptionHelper {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    public static @NotNull HashedPasskey hashPasskey (final byte @NotNull [] passkey) throws NoSuchAlgorithmException {
+    // private constructor making this class even less extendable and doesn't allow any instances of it.
+    private EncryptionHelper () {}
+
+    public static @NotNull HashedPasskey hashPasskey(final byte @NotNull [] passkey) throws NoSuchAlgorithmException {
         // create salt
         final byte[] salt = new byte[16];
         SecureRandom.getInstanceStrong().nextBytes(salt);

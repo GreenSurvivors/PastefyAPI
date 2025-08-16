@@ -1,23 +1,19 @@
 package de.greensurvivors.implementation.content;
 
+import com.google.gson.Gson;
 import de.greensurvivors.Paste;
 import de.greensurvivors.PasteContent;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleStringContentWrapper implements PasteContent<@NotNull String> {
-    private @NotNull String content;
-
-    public SimpleStringContentWrapper(final @NotNull String content) {
-        this.content = content;
-    }
+public record SimpleStringContentWrapper(@NotNull String getContent) implements PasteContent<@NotNull String> {
 
     @Override
-    public @NotNull String getContent() {
-        return content;
-    }
-
-    @Override
-    public Paste.PasteType getPasteType() {
+    public Paste.@NotNull PasteType getPasteType() {
         return Paste.PasteType.PASTE;
+    }
+
+    @Override
+    public @NotNull String serialize(final @NotNull Gson gson) {
+        return getContent;
     }
 }

@@ -13,12 +13,13 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class PasteBuilderImpl<T> implements PasteBuilder<T> {
+// sorry for the final, but I can't take encryption lightly.
+public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     private @NotNull String title;
     private @NotNull PasteContent<T> content;
     private @NotNull PasteVisibility visibility = PasteVisibility.UNLISTED;
     private @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
-    private @Nullable Instant expiration = null;
+    private @Nullable Instant expirationTime = null;
     @SuppressWarnings("unchecked") // yes Java a list IS a collection and if empty there CAN'T be any generic issues.
     private @NotNull Collection<@NotNull String> tags = Collections.EMPTY_LIST;
 
@@ -28,13 +29,15 @@ public class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public void setTitle(final @NotNull String title) {
+    public PasteBuilder<T> setTitle(final @NotNull String title) {
         this.title = title;
+        return this;
     }
 
     @Override
-    public void setContent(final @NotNull PasteContent<T> content) {
+    public PasteBuilder<T> setContent(final @NotNull PasteContent<T> content) {
         this.content = content;
+        return this;
     }
 
     @Override
@@ -43,36 +46,42 @@ public class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public void setVisibility(final @NotNull PasteVisibility visibility) {
+    public PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility) {
         this.visibility = visibility;
+        return this;
     }
 
     @Override
-    public void encrypt(final byte @Nullable [] password) throws NoSuchAlgorithmException {
+    public PasteBuilder<T> encryptWhenSending(final byte @Nullable [] password) throws NoSuchAlgorithmException {
         if (password != null) {
             this.hashedPasskey = EncryptionHelper.hashPasskey(password);
         } else {
             this.hashedPasskey = null;
         }
+        return this;
     }
 
     @Override
-    public void setExpiration(final @Nullable Instant expiration) {
-        this.expiration = expiration;
+    public PasteBuilder<T> setExpirationTime(final @Nullable Instant expirationTime) {
+        this.expirationTime = expirationTime;
+        return this;
     }
 
     @Override
-    public void setTags(final @NotNull Collection<String> tags) {
+    public PasteBuilder<T> setTags(final @NotNull Collection<String> tags) {
         this.tags = new LinkedHashSet<>(tags); // copy tags into new collection to prevent dumb issues
+        return this;
     }
 
     @Override
-    public void addTag(final @NotNull String tag) {
+    public PasteBuilder<T> addTag(final @NotNull String tag) {
         if (tags == Collections.EMPTY_LIST){
             tags = new LinkedHashSet<>();
         }
 
         tags.add(tag);
+
+        return this;
     }
 
     @Override
@@ -101,12 +110,16 @@ public class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public @Nullable Instant getExpiration() {
-        return expiration;
+    public @Nullable Instant getExpirationTime() {
+        return expirationTime;
     }
 
     @Override
     public @NotNull @Unmodifiable Collection<String> getTags() {
         return List.copyOf(tags); // copy tags into new collection to prevent dumb issues
+    }
+
+    @Nullable EncryptionHelper.HashedPasskey getHashedPasskey() {
+        return hashedPasskey;
     }
 }
