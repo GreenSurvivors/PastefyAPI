@@ -44,7 +44,7 @@ public class SessionImpl implements Session {
     }
 
     public SessionImpl() {
-        this("https://pastefy.app", null);
+        this("https://pastefy.app");
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SessionImpl implements Session {
 
     @Override
     public @NotNull CompletableFuture<@Nullable PasteReply> getPaste(@NotNull String pasteID) {
-        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "paste"));
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "paste/"+pasteID));
         if (apiKey != null) {
             requestBuilder.header("Authorization", "Bearer " + apiKey);
         }
