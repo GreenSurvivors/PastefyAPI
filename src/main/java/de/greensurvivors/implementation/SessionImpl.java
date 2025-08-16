@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.greensurvivors.*;
 import de.greensurvivors.exception.HttpRequestFailedException;
+import de.greensurvivors.implementation.response.PostResponse;
+import de.greensurvivors.implementation.response.SuccessResponse;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +83,7 @@ public class SessionImpl implements Session {
                         final @NotNull PostResponse postResponse = gson.fromJson(body, PostResponse.class);
 
                         if (postResponse.success()) {
-                            return postResponse.paste();
+                            return postResponse.getPaste();
                         } else {
                             return null;
                         }
@@ -119,17 +121,36 @@ public class SessionImpl implements Session {
     }
 
     @Override
+    public @NotNull CompletableFuture<@NotNull Boolean> deletePaste(@NotNull String pasteID) {
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "paste/"+pasteID));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.DELETE().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                if (stringHttpResponse.statusCode() == 200) { // status == ok
+                    final @Nullable String body = stringHttpResponse.body();
+
+                    if (body != null) {
+                        return gson.fromJson(body, SuccessResponse.class).success();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                }
+            });
+    }
+
+    @Override
     public @NotNull CompletableFuture<@Nullable FolderReply> createFolder(@NotNull FolderBuilder builder) {
         return null;
     }
 
     @Override
     public @NotNull CompletableFuture<@Nullable FolderReply> getFolder() {
-        return null;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<@NotNull Integer> deletePaste(@NotNull String pasteID) {
         return null;
     }
 

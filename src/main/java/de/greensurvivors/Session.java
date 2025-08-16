@@ -16,7 +16,7 @@ public interface Session {
 
     @NotNull CompletableFuture<@Nullable FolderReply> getFolder();
 
-    @NotNull CompletableFuture<@NotNull Integer> deletePaste(final @NotNull String pasteID);
+    @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);
 
     @NotNull CompletableFuture<@NotNull Integer> deleteFolder(final @NotNull String folderID);
 }

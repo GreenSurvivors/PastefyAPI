@@ -13,11 +13,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SessionImplTest {
+public class SessionImplTest { // todo move down to api level
     static SessionImpl session;
     static Gson gson;
 
@@ -35,11 +34,9 @@ public class SessionImplTest {
                  setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             whenComplete( (response, throwable) -> {
                 if (throwable != null) {
-                    if (throwable instanceof HttpRequestFailedException httpRequestFailedException) {
+                    if (throwable.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
                         System.out.println("status code: " + httpRequestFailedException.getStatusCode());
                     }
-
-                    System.out.println(Arrays.toString(throwable.getStackTrace()));
                 }
             }).join();
 
@@ -58,7 +55,6 @@ public class SessionImplTest {
 
     @Test
     public void getString () throws IOException, CryptoException {
-
         PasteReply pasteReply = session.createPaste(Paste.newBuilder("test-title", new SimpleStringContentWrapper("This is an api test.")).
                 setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             whenComplete((response, throwable) -> {
@@ -88,5 +84,28 @@ public class SessionImplTest {
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());
+    }
+
+    @Test
+    public void deleteString () throws IOException, CryptoException { // todo does this fail bacuase we have no API key??
+        Boolean success = session.createPaste(Paste.newBuilder("test-title", new SimpleStringContentWrapper("This is an api test.")).
+                setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
+            whenComplete( (response, throwable) -> {
+                if (throwable != null) {
+                    if (throwable.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
+                        System.out.println("status code: " + httpRequestFailedException.getStatusCode());
+                    }
+                }
+            }).thenCompose(pasteReply -> session.deletePaste(pasteReply.getId()).
+                whenComplete((deleteResponse, throwable) -> {
+                    if (throwable != null) {
+                        if (throwable.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
+                            System.out.println("status code: " + httpRequestFailedException.getStatusCode());
+                        }
+                    }
+                })
+            ).join();
+
+        assertTrue(success);
     }
 }
