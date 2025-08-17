@@ -15,5 +15,6 @@ public interface PasteReply extends Paste<String> {
 
     @NotNull URI getRawURL();
 
+    // I really have no idea why the api has this field, if the api answers with status code 404 if a paste doesn't exist...
     boolean exists ();
 }

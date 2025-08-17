@@ -1,7 +1,5 @@
-package de.greensurvivors.implementation;
+package de.greensurvivors;
 
-import de.greensurvivors.Paste;
-import de.greensurvivors.PasteReply;
 import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.implementation.content.SimpleStringContentWrapper;
 import org.bouncycastle.crypto.CryptoException;
@@ -11,21 +9,22 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionImplTest { // todo move down to api level
+public class SessionTest {
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
-    private static SessionImpl session;
+    private static Session session;
     private static boolean hasAPIKey;
 
     @BeforeAll
     public static void Setup() {
         final String apiKey = System.getenv("PastefyAPIKey");
-        session = new SessionImpl(apiKey);
+        session = Session.newSession(apiKey);
         hasAPIKey = apiKey != null;
     }
 
@@ -64,6 +63,18 @@ public class SessionImplTest { // todo move down to api level
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());
+    }
+
+    @Test
+    public void getNonExistent () {
+        try {
+            final PasteReply pasteReply = session.getPaste("8DMWU9tV").join();
+
+            assertNull(pasteReply); // should never happen!
+        } catch (CompletionException e) {
+            assertInstanceOf(HttpRequestFailedException.class, e.getCause());
+            assertEquals(404, ((HttpRequestFailedException)e.getCause()).getStatusCode());
+        }
     }
 
     @Test
