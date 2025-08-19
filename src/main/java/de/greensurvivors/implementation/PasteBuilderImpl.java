@@ -1,12 +1,19 @@
 package de.greensurvivors.implementation;
 
-import de.greensurvivors.Paste;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.SerializedName;
 import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteContent;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
@@ -19,12 +26,16 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     private @NotNull String title;
     private @NotNull PasteContent<T> content;
     private @NotNull PasteVisibility visibility = PasteVisibility.UNLISTED;
-    private @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
+    private transient @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
+    @SerializedName("expire_at")
     private @Nullable Instant expirationTime = null;
-    @SuppressWarnings("unchecked") // yes Java a list IS a collection and if empty there CAN'T be any generic issues.
-    private @NotNull Collection<@NotNull String> tags = Collections.EMPTY_LIST;
+    private @NotNull Collection<@NotNull String> tags = Collections.emptyList();
+    @SerializedName("folder")
     private @Nullable String folderId = null;
+    @SerializedName("forkedFrom")
     private @Nullable String pasteIdForkedFrom = null;
+    @SerializedName("ai")
+    private boolean useAI = false;
 
     public PasteBuilderImpl (final @NotNull String title, final @NotNull PasteContent<T> content) {
         this.title = title;
@@ -100,8 +111,14 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public @NotNull Paste<T> build() {
-        return new PasteImpl<>(this);
+    public @NotNull PasteBuilder<T> useAI(boolean useAI) {
+        this.useAI = useAI;
+        return this;
+    }
+
+    @Override
+    public boolean doesUseAI() {
+        return useAI;
     }
 
     @Override
@@ -149,12 +166,43 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
         return pasteIdForkedFrom;
     }
 
-    @Override
-    public @NotNull <NewT> PasteBuilder<NewT> newTypedBuilder(@NotNull PasteContent<NewT> newTypedPasteContent) {
-        return new PasteBuilderImpl<>(title, newTypedPasteContent);
+    private @Nullable EncryptionHelper.HashedPasskey getHashedPasskey() {
+        return hashedPasskey;
     }
 
-    @Nullable EncryptionHelper.HashedPasskey getHashedPasskey() {
-        return hashedPasskey;
+    final static class PasteBuilderJsonSerializer implements JsonSerializer<PasteBuilderImpl<?>> {
+
+        @Override
+        public JsonElement serialize(PasteBuilderImpl<?> src, Type typeOfSrc, JsonSerializationContext context) {
+            final @NotNull JsonObject resultObj = new JsonObject();
+
+            if (src.isEncrypted()) {
+                try {
+                    resultObj.add("title",
+                        context.serialize(EncryptionHelper.encrypt(src.getTitle(), src.getHashedPasskey())));
+                    resultObj.add("content",
+                        context.serialize(EncryptionHelper.encrypt(src.getPackagedContent().serialize(), src.getHashedPasskey())));
+                } catch (NoSuchAlgorithmException | InvalidCipherTextException | IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                resultObj.add("title", context.serialize(src.getTitle()));
+                try {
+                    resultObj.add("content", context.serialize(src.getPackagedContent().serialize()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            resultObj.add("visibility", context.serialize(src.getVisibility()));
+            resultObj.add("encrypted", context.serialize(src.isEncrypted()));
+            resultObj.add("expire_at", context.serialize(src.getExpirationTime()));
+            resultObj.add("tags", context.serialize(src.getTags()));
+            resultObj.add("folder", context.serialize(src.getFolderId()));
+            resultObj.add("forkedFrom", context.serialize(src.getPasteIdForkedFrom()));
+            resultObj.add("ai", context.serialize(src.doesUseAI()));
+
+            return resultObj;
+        }
     }
 }

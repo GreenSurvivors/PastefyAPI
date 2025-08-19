@@ -1,36 +1,113 @@
 package de.greensurvivors.implementation;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteReply;
+import de.greensurvivors.UserReply;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.Collection;
 
-public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
+public class PasteReplyImpl implements PasteReply {
+    protected @NotNull String title;
+    protected @NotNull String content;
+    private final @NotNull PasteType type;
+    private final @NotNull PasteVisibility visibility;
+    @SerializedName("encrypted")
+    private final boolean isEncrypted;
+    @SerializedName("expire_at")
+    private final @Nullable Instant expirationTime;
+    private final @NotNull Collection<@NotNull String> tags;
+    @SerializedName("folder")
+    private final @Nullable String folderId;
+    @SerializedName("forkedFrom")
+    private final @Nullable String pasteIdForkedFrom;
+
     private final @NotNull String id;
     private final boolean exists;
     @SerializedName("raw_url")
     private final @NotNull URI rawURL;
     @SerializedName("created_at")
     private final @NotNull Instant createdAt;
-    @SerializedName("user_id")
-    private final @Nullable String userID;
+    private final @Nullable UserReplyImpl user;
+    private final @Nullable Boolean isStarred;
 
     // unused, this class gets instanced by gson!
-    private PasteReplyImpl(@NotNull PasteBuilder<String> pasteBuilder,
-                           @NotNull String id, boolean exists,
-                           @NotNull URI rawURL, @NotNull Instant createdAt,
-                           @Nullable String userID) {
-        super(pasteBuilder);
+    private PasteReplyImpl(
+        @NotNull String title, @NotNull String content, @NotNull PasteType type,
+        @NotNull PasteVisibility visibility,
+        boolean isEncrypted,
+        @Nullable Instant expirationTime,
+        @NotNull Collection<@NotNull String> tags,
+        @Nullable String folderId,
+        @Nullable String pasteIdForkedFrom,
+        @NotNull String id,
+        boolean exists,
+        @NotNull URI rawURL, @NotNull Instant createdAt,
+        @Nullable UserReplyImpl user, @Nullable Boolean isStarred) {
+        this.title = title;
+        this.content = content;
+        this.type = type;
+        this.visibility = visibility;
+        this.isEncrypted = isEncrypted;
+        this.expirationTime = expirationTime;
+        this.tags = tags;
+        this.folderId = folderId;
+        this.pasteIdForkedFrom = pasteIdForkedFrom;
         this.id = id;
         this.exists = exists;
         this.rawURL = rawURL;
         this.createdAt = createdAt;
-        this.userID = userID;
+        this.user = user;
+        this.isStarred = isStarred;
+    }
+
+    @Override
+    public @NotNull PasteType getType() {
+        return type;
+    }
+
+    @Override
+    public @NotNull String getTitle() {
+        return title;
+    }
+
+    @Override
+    public @NotNull String getContent() {
+        return content;
+    }
+
+    @Override
+    public @NotNull PasteVisibility getVisibility() {
+        return visibility;
+    }
+
+    @Override
+    public boolean isEncrypted() {
+        return isEncrypted;
+    }
+
+    @Override
+    public @Nullable Instant getExpirationTime() {
+        return expirationTime;
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull String> getTags() {
+        return tags;
+    }
+
+    @Override
+    public @Nullable String getFolderId() {
+        return folderId;
+    }
+
+    @Override
+    public @Nullable String getPasteIdForkedFrom() {
+        return pasteIdForkedFrom;
     }
 
     @Override
@@ -44,13 +121,18 @@ public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     }
 
     @Override
-    public @Nullable String getUserId() {
-        return userID;
+    public @Nullable UserReply getUser() {
+        return user;
     }
 
     @Override
     public @NotNull URI getRawURL() {
         return rawURL;
+    }
+
+    @Override
+    public @Nullable Boolean isStarred() {
+        return isStarred;
     }
 
     @Override

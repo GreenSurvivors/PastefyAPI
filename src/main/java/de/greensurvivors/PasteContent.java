@@ -1,6 +1,5 @@
 package de.greensurvivors;
 
-import com.google.gson.Gson;
 import de.greensurvivors.implementation.content.SimpleStringContentWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,12 +11,11 @@ public interface PasteContent<T> {
 
     @NotNull Paste.PasteType getPasteType ();
 
-    @NotNull String serialize (final @NotNull Gson gson) throws IOException;
+    @NotNull String serialize () throws IOException;
 
     static @NotNull PasteContent<@NotNull String> fromString(final @NotNull String content) {
         return new SimpleStringContentWrapper(content);
     }
 
     // todo name -> content map
-    // todo deal with decryption
 }

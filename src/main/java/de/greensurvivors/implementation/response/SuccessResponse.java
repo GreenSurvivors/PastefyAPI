@@ -9,7 +9,7 @@ public class SuccessResponse {
         this.success = success;
     }
 
-    public boolean success() {
+    public boolean isSuccess() {
         return success;
     }
 

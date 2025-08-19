@@ -15,7 +15,15 @@ class InstantAdapter extends TypeAdapter<Instant> {
 
     @Override
     public void write(JsonWriter out, Instant value) throws IOException {
-        out.value(DATE_TIME_FORMATTER.format(value));
+        boolean originalSerializeNulls = out.getSerializeNulls();
+        out.setSerializeNulls(false);
+
+        try {
+            out.value(DATE_TIME_FORMATTER.format(value));
+        } finally {
+            // Restore original behavior for the rest of the data.
+            out.setSerializeNulls(originalSerializeNulls);
+        }
     }
 
     @Override

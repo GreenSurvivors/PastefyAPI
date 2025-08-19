@@ -19,8 +19,6 @@ public interface Paste<T> {
     @Nullable String getFolderId();
     @Nullable String getPasteIdForkedFrom();
 
-    <NewT>@NotNull PasteBuilder<NewT> newTypedBuilder(final @NotNull PasteContent<NewT> newTPasteContent);
-
     static <T> PasteBuilder<T> newBuilder(@NotNull String title, @NotNull PasteContent<T> content) {
         return new PasteBuilderImpl<T>(title, content);
     }

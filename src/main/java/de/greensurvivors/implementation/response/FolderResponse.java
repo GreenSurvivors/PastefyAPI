@@ -1,15 +1,18 @@
 package de.greensurvivors.implementation.response;
 
+import com.google.gson.annotations.SerializedName;
 import de.greensurvivors.FolderReply;
+import de.greensurvivors.implementation.FolderReplyImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 /// technical class, since the api wraps the created Folder for whatever reason...
 public class FolderResponse extends SuccessResponse {
-    protected final @NotNull FolderReply folderReply;
+    @SerializedName("folder")
+    protected final @NotNull FolderReplyImpl folderReply;
 
-    public FolderResponse(final boolean success, final @NotNull FolderReply folderReply) {
+    protected FolderResponse(final boolean success, final @NotNull FolderReplyImpl folderReply) {
         super(success);
         this.folderReply = folderReply;
     }

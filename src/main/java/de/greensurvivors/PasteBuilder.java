@@ -29,5 +29,7 @@ public sealed interface PasteBuilder<T> extends Paste<T> permits de.greensurvivo
 
     @NotNull PasteBuilder<T> setPasteIdForkedFrom(final @Nullable String pasteIdForkedFrom);
 
-    @NotNull Paste<T> build();
+    @NotNull PasteBuilder<T> useAI(final boolean useAI);
+
+    boolean doesUseAI();
 }

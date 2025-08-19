@@ -12,9 +12,11 @@ public interface PasteReply extends Paste<String> {
 
     @NotNull Instant getCreatedAt();
 
-    @Nullable String getUserId();
+    @Nullable UserReply getUser();
 
     @NotNull URI getRawURL();
+
+    @Nullable Boolean isStarred();
 
     @NotNull PasteReply decrypt(final byte @NotNull [] password) throws InvalidCipherTextException;
 

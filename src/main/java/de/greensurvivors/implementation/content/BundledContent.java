@@ -1,6 +1,5 @@
 package de.greensurvivors.implementation.content;
 
-import com.google.gson.Gson;
 import de.greensurvivors.Paste;
 import de.greensurvivors.PasteContent;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ public class BundledContent<T> implements PasteContent<Map<String, PasteContent<
     }
 
     @Override
-    public @NotNull String serialize(@NotNull Gson gson) throws IOException {
+    public @NotNull String serialize() throws IOException {
         final StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append('[');
@@ -33,7 +32,7 @@ public class BundledContent<T> implements PasteContent<Map<String, PasteContent<
             stringBuilder.append('{');
 
             stringBuilder.append("\\\"name\\\":").append("\\\"").append(entry.getKey()).append("\\\",");
-            stringBuilder.append("\\\"contents\\\":").append("\\\"").append(entry.getValue().serialize(gson)).append("\\\",");
+            stringBuilder.append("\\\"contents\\\":").append("\\\"").append(entry.getValue().serialize()).append("\\\",");
 
             stringBuilder.append('}');
 

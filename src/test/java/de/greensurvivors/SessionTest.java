@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest { // todo test tags, encryption
+public class SessionTest { // todo test tags, encryption, isStarred
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
@@ -42,7 +42,7 @@ public class SessionTest { // todo test tags, encryption
         assertEquals(Paste.PasteType.PASTE, pasteReply.getType());
         assertFalse(pasteReply.isEncrypted());
         assertTrue(pasteReply.exists());
-        assertEquals(hasAPIKey, (pasteReply.getUserId() != null));
+        assertEquals(hasAPIKey, (pasteReply.getUser() != null)); // todo better test
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());
@@ -65,7 +65,7 @@ public class SessionTest { // todo test tags, encryption
         assertEquals(Paste.PasteType.PASTE, pasteReply.getType());
         assertFalse(pasteReply.isEncrypted());
         assertTrue(pasteReply.exists());
-        assertEquals(hasAPIKey, (pasteReply.getUserId() != null));
+        assertEquals(hasAPIKey, (pasteReply.getUser() != null));
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());

@@ -5,19 +5,16 @@ import com.google.gson.GsonBuilder;
 import de.greensurvivors.*;
 import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.implementation.response.FolderResponse;
-import de.greensurvivors.implementation.response.PostResponse;
+import de.greensurvivors.implementation.response.PasteResponse;
 import de.greensurvivors.implementation.response.SuccessResponse;
-import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +36,7 @@ public class SessionImpl implements Session {
 
         this.gson = new GsonBuilder().
             registerTypeAdapter(Instant.class, new InstantAdapter()).
+            registerTypeAdapter(PasteBuilderImpl.class, new PasteBuilderImpl.PasteBuilderJsonSerializer()).
             create();
     }
 
@@ -51,26 +49,13 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public <T> @NotNull CompletableFuture<PasteReply> createPaste(final @NotNull PasteBuilder<T> pasteBuilder) throws IOException, CryptoException {
-        String title = pasteBuilder.getTitle();
-        String content = pasteBuilder.getPackagedContent().serialize(gson);
-
-        if (pasteBuilder.isEncrypted()) {
-            try {
-                title = EncryptionHelper.encrypt(title, ((PasteBuilderImpl<T>)pasteBuilder).getHashedPasskey());
-                content = EncryptionHelper.encrypt(content, ((PasteBuilderImpl<T>)pasteBuilder).getHashedPasskey());
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        final Paste<String> paste = pasteBuilder.newTypedBuilder(PasteContent.fromString(content)).setTitle(title).build();
-
+    public <T> @NotNull CompletableFuture<PasteReply> createPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
         final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "paste"));
         if (apiKey != null) {
             requestBuilder.header("Authorization", "Bearer " + apiKey);
         }
-        final HttpRequest request = requestBuilder.POST(HttpRequest.BodyPublishers.ofString(gson.toJson(paste))).build();
+
+        final HttpRequest request = requestBuilder.POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
@@ -78,10 +63,10 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        final @NotNull PostResponse postResponse = gson.fromJson(body, PostResponse.class);
+                        final @NotNull PasteResponse pastResponse = gson.fromJson(body, PasteResponse.class);
 
-                        if (postResponse.success()) {
-                            return postResponse.getPaste();
+                        if (pastResponse.isSuccess()) {
+                            return pastResponse.getPaste();
                         } else {
                             return null;
                         }
@@ -132,7 +117,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        return gson.fromJson(body, SuccessResponse.class).success();
+                        return gson.fromJson(body, SuccessResponse.class).isSuccess();
                     } else {
                         return false;
                     }
@@ -158,7 +143,7 @@ public class SessionImpl implements Session {
                     if (body != null) {
                         final @NotNull FolderResponse folderResponse = gson.fromJson(body, FolderResponse.class);
 
-                        if (folderResponse.success()) {
+                        if (folderResponse.isSuccess()) {
                             return folderResponse.getFolder();
                         } else {
                             return null;
@@ -221,7 +206,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        return gson.fromJson(body, SuccessResponse.class).success();
+                        return gson.fromJson(body, SuccessResponse.class).isSuccess();
                     } else {
                         return false;
                     }
