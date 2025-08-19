@@ -12,7 +12,7 @@ public interface PasteReply extends Paste<String> {
 
     @NotNull Instant getCreatedAt();
 
-    @Nullable UserReply getUser();
+    @Nullable PublicUserReply getUser();
 
     @NotNull URI getRawURL();
 

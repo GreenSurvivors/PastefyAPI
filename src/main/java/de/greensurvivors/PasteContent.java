@@ -1,6 +1,6 @@
 package de.greensurvivors;
 
-import de.greensurvivors.implementation.content.SimpleStringContentWrapper;
+import de.greensurvivors.implementation.content.SimpleStringContent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ public interface PasteContent<T> {
     @NotNull String serialize () throws IOException;
 
     static @NotNull PasteContent<@NotNull String> fromString(final @NotNull String content) {
-        return new SimpleStringContentWrapper(content);
+        return new SimpleStringContent(content);
     }
 
     // todo name -> content map

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public interface UserReply {
+public interface PublicUserReply {
     @NotNull String getId();
 
     @NotNull String getName();

@@ -2,21 +2,27 @@ package de.greensurvivors.implementation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import de.greensurvivors.*;
 import de.greensurvivors.exception.HttpRequestFailedException;
-import de.greensurvivors.implementation.response.FolderResponse;
-import de.greensurvivors.implementation.response.PasteResponse;
-import de.greensurvivors.implementation.response.SuccessResponse;
+import de.greensurvivors.implementation.response.FolderReplyWrapper;
+import de.greensurvivors.implementation.response.PasteReplyWrapper;
+import de.greensurvivors.implementation.response.SuccessReply;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.Security;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 
 public class SessionImpl implements Session {
@@ -63,7 +69,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        final @NotNull PasteResponse pastResponse = gson.fromJson(body, PasteResponse.class);
+                        final @NotNull PasteReplyWrapper pastResponse = gson.fromJson(body, PasteReplyWrapper.class);
 
                         if (pastResponse.isSuccess()) {
                             return pastResponse.getPaste();
@@ -117,7 +123,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        return gson.fromJson(body, SuccessResponse.class).isSuccess();
+                        return gson.fromJson(body, SuccessReply.class).isSuccess();
                     } else {
                         return false;
                     }
@@ -141,7 +147,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        final @NotNull FolderResponse folderResponse = gson.fromJson(body, FolderResponse.class);
+                        final @NotNull FolderReplyWrapper folderResponse = gson.fromJson(body, FolderReplyWrapper.class);
 
                         if (folderResponse.isSuccess()) {
                             return folderResponse.getFolder();
@@ -206,7 +212,7 @@ public class SessionImpl implements Session {
                     final @Nullable String body = stringHttpResponse.body();
 
                     if (body != null) {
-                        return gson.fromJson(body, SuccessResponse.class).isSuccess();
+                        return gson.fromJson(body, SuccessReply.class).isSuccess();
                     } else {
                         return false;
                     }
@@ -214,5 +220,28 @@ public class SessionImpl implements Session {
                     throw new HttpRequestFailedException(stringHttpResponse.statusCode());
                 }
             });
+    }
+
+    protected static class InstantAdapter extends TypeAdapter<Instant> {
+        // TimeStamp - as used by the web api - or Instant, as used by this lib, is always utc.
+        private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.n").withZone(ZoneOffset.UTC);
+
+        @Override
+        public void write(JsonWriter out, Instant value) throws IOException {
+            boolean originalSerializeNulls = out.getSerializeNulls();
+            out.setSerializeNulls(false);
+
+            try {
+                out.value(DATE_TIME_FORMATTER.format(value));
+            } finally {
+                // Restore original behavior for the rest of the data.
+                out.setSerializeNulls(originalSerializeNulls);
+            }
+        }
+
+        @Override
+        public Instant read(JsonReader in) throws IOException {
+            return Instant.from(DATE_TIME_FORMATTER.parse(in.nextString()));
+        }
     }
 }

@@ -1,18 +1,19 @@
-package de.greensurvivors.implementation.response;
+package de.greensurvivors.implementation.replywrapper;
 
 import com.google.gson.annotations.SerializedName;
 import de.greensurvivors.PasteReply;
 import de.greensurvivors.implementation.PasteReplyImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 /// technical class, since the api wraps the created Paste for whatever reason...
-public class PasteResponse extends SuccessResponse {
+public class PasteReplyWrapper extends SuccessReply {
     @SerializedName("paste")
     protected final @NotNull PasteReplyImpl pasteReply;
 
-    protected PasteResponse(boolean success, @NotNull PasteReplyImpl pasteReply) {
+    protected PasteReplyWrapper(boolean success, @NotNull PasteReplyImpl pasteReply) {
         super(success);
         this.pasteReply = pasteReply;
     }
@@ -22,10 +23,15 @@ public class PasteResponse extends SuccessResponse {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (PasteResponse) obj;
+    public boolean equals(final @Nullable Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final PasteReplyWrapper that = (PasteReplyWrapper) obj;
         return this.success == that.success &&
             Objects.equals(this.pasteReply, that.pasteReply);
     }

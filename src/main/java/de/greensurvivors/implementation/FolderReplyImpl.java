@@ -9,10 +9,11 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Instant;
 import java.util.Set;
 
+@SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class FolderReplyImpl implements FolderReply {
     private final @NotNull String id;
     private final @NotNull String name;
-    private final @Nullable String userId;
+    private final @Nullable String userId; // the web api is a mess. Why does the paste
     @SerializedName("children")
     private final @Nullable Set<FolderReplyImpl> subFolders;
     private final  @Nullable Set<PasteReplyImpl> pastes;
@@ -20,7 +21,12 @@ public class FolderReplyImpl implements FolderReply {
     private final @NotNull Instant createdAt;
     private final boolean exists;
 
-    public FolderReplyImpl(@NotNull String id, @NotNull String name, @Nullable String userId, @Nullable Set<FolderReplyImpl> subFolders, @Nullable Set<PasteReplyImpl> pastes, @NotNull Instant createdAt, boolean exists) {
+    private FolderReplyImpl(@NotNull String id, @NotNull String name,
+                            @Nullable String userId,
+                            @Nullable Set<FolderReplyImpl> subFolders,
+                            @Nullable Set<PasteReplyImpl> pastes,
+                            @NotNull Instant createdAt,
+                            boolean exists) {
         this.id = id;
         this.name = name;
         this.userId = userId;

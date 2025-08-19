@@ -25,8 +25,8 @@ import java.util.Map;
 // Since it's easy to trip and
 // https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409
 public final class EncryptionHelper {
-    private static final int IV_LENGTH_ENCRYPT = 12;
-    private static final int TAG_LENGTH_ENCRYPT = 16;
+    private static final int AES_IV_LENGTH = 12;
+    private static final int AES_TAG_LENGTH = 16;
     private static final int ARGON2_ITERATIONS = 10;
     private static final int ARGON2_MEMORY_KB = 66536;
     private static final int ARGON2_PARALLELISM = 1;
@@ -94,7 +94,7 @@ public final class EncryptionHelper {
         // https://stackoverflow.com/questions/73557246/in-java-how-to-use-aes-encryption-so-that-a-static-string-text-will-result-in-si
         // https://security.stackexchange.com/questions/278045/how-can-i-ensure-nonrepeating-iv-with-aes-gcm-encryption
         // https://crypto.stackexchange.com/questions/41601/aes-gcm-recommended-iv-size-why-12-bytes
-        final byte[] nonce = new byte[IV_LENGTH_ENCRYPT];
+        final byte[] nonce = new byte[AES_IV_LENGTH];
         SecureRandom.getInstanceStrong().nextBytes(nonce);
 
         // prepare cipher
@@ -102,7 +102,7 @@ public final class EncryptionHelper {
         // https://cryptobook.nakov.com/symmetric-key-ciphers/popular-symmetric-algorithms
         // https://en.wikipedia.org/wiki/Padding_oracle_attack
         final AEADCipher cipher = new GCMSIVBlockCipher();
-        cipher.init(true, new AEADParameters(encodeKeyParameter, TAG_LENGTH_ENCRYPT * 8, nonce));
+        cipher.init(true, new AEADParameters(encodeKeyParameter, AES_TAG_LENGTH * 8, nonce));
 
         // decode back to bytes
         final byte[] encryptInputData = content.getBytes(StandardCharsets.UTF_8);
@@ -125,7 +125,7 @@ public final class EncryptionHelper {
         encryptOutMap.put("pwAlgoParallelism", hashedPasskey.pwAlgoParallelism());
         encryptOutMap.put("pwAlgoSalt", b64encoder.encodeToString(hashedPasskey.salt()));
         encryptOutMap.put("cipherIV", b64encoder.encodeToString(nonce));
-        encryptOutMap.put("cipherMacSize", TAG_LENGTH_ENCRYPT);
+        encryptOutMap.put("cipherMacSize", AES_TAG_LENGTH);
         encryptOutMap.put("keySize", ARGON2_KEY_SIZE);
         encryptOutMap.put("data", b64encoder.encodeToString(encryptedData));
 

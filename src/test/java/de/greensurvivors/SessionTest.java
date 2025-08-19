@@ -1,7 +1,7 @@
 package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
-import de.greensurvivors.implementation.content.SimpleStringContentWrapper;
+import de.greensurvivors.implementation.content.SimpleStringContent;
 import org.bouncycastle.crypto.CryptoException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class SessionTest { // todo test tags, encryption, isStarred
     public void postString () throws IOException, CryptoException {
         final Instant instantBefore = Instant.now();
 
-         PasteReply pasteReply = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContentWrapper(CONTENT)).
+         PasteReply pasteReply = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContent(CONTENT)).
                  setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).join();
 
         assertNotNull(pasteReply);
@@ -54,7 +54,7 @@ public class SessionTest { // todo test tags, encryption, isStarred
 
     @Test
     public void getString () throws IOException, CryptoException {
-        PasteReply pasteReply = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContentWrapper(CONTENT)).
+        PasteReply pasteReply = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContent(CONTENT)).
                 setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             thenCompose(postResponse -> session.getPaste(postResponse.getId())).join();
 
@@ -87,7 +87,7 @@ public class SessionTest { // todo test tags, encryption, isStarred
     public void deleteString () throws IOException, CryptoException {
         assumeTrue(hasAPIKey); // the api needs to verify you are indeed the owner of this paste in order to delete it.
 
-        Boolean success = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContentWrapper(CONTENT)).
+        Boolean success = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContent(CONTENT)).
                 setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
 
