@@ -31,6 +31,8 @@ public interface Session {
 
     @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId);
 
+    @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder);
+
     @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);
 
     @NotNull CompletableFuture<@NotNull Boolean> deleteFolder(final @NotNull String folderID);

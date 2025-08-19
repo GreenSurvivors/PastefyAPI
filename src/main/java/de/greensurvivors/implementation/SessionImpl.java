@@ -173,8 +173,19 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable FolderReply> getFolder(@NotNull String folderId) { // todo getChildren etc!
-        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "folder/"+folderId));
+    public @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId) {
+        return getFolder(folderId, false);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder) {
+        @NotNull String urlStr = baseURL + "folder/" + folderId;
+
+        if (hideSubFolder) {
+            urlStr += "?hide_children=true";
+        }
+
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(urlStr));
         if (apiKey != null) {
             requestBuilder.header("Authorization", "Bearer " + apiKey);
         }
@@ -197,7 +208,7 @@ public class SessionImpl implements Session {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Boolean> deleteFolder(@NotNull String folderID) {
+    public @NotNull CompletableFuture<@NotNull Boolean> deleteFolder(final @NotNull String folderID) {
         final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "folder/"+folderID));
         if (apiKey != null) {
             requestBuilder.header("Authorization", "Bearer " + apiKey);

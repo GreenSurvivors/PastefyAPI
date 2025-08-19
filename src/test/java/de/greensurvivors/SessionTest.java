@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest { // todo test tags
+public class SessionTest { // todo test tags, encryption
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 

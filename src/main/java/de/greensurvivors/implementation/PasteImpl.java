@@ -12,8 +12,8 @@ import java.time.Instant;
 import java.util.Collection;
 
 public class PasteImpl<T> implements Paste<T> {
-    private final @NotNull String title;
-    private final @NotNull T content;
+    protected @NotNull String title;
+    protected @NotNull T content;
     private final @NotNull PasteType type;
     private final @NotNull PasteVisibility visibility;
     @SerializedName("encrypted")

@@ -3,6 +3,7 @@ package de.greensurvivors.implementation;
 import com.google.gson.annotations.SerializedName;
 import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteReply;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,7 @@ public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     @SerializedName("user_id")
     private final @Nullable String userID;
 
+    // unused, this class gets instanced by gson!
     private PasteReplyImpl(@NotNull PasteBuilder<String> pasteBuilder,
                            @NotNull String id, boolean exists,
                            @NotNull URI rawURL, @NotNull Instant createdAt,
@@ -49,6 +51,14 @@ public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     @Override
     public @NotNull URI getRawURL() {
         return rawURL;
+    }
+
+    @Override
+    public @NotNull PasteReply decrypt(byte @NotNull [] password) throws InvalidCipherTextException {
+        this.title = EncryptionHelper.decrypt(this.getTitle(), password);
+        this.content = EncryptionHelper.decrypt(this.getContent(), password);
+
+        return this;
     }
 
     public boolean exists() {
