@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletionException;
@@ -14,7 +15,7 @@ import java.util.concurrent.CompletionException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest { // todo test tags, encryption, isStarred
+public class SessionTest { // todo test tags, encryption, isStarred, ai
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
@@ -78,8 +79,12 @@ public class SessionTest { // todo test tags, encryption, isStarred
 
             assertNull(pasteReply); // should never happen!
         } catch (CompletionException e) {
-            assertInstanceOf(HttpRequestFailedException.class, e.getCause());
-            assertEquals(404, ((HttpRequestFailedException)e.getCause()).getStatusCode());
+            if (e.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
+                assertEquals(HttpURLConnection.HTTP_NOT_FOUND, httpRequestFailedException.getStatusCode());
+                assertEquals("NotFoundException", httpRequestFailedException.getExceptionThrownName());
+            } else {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -92,5 +97,23 @@ public class SessionTest { // todo test tags, encryption, isStarred
             thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
 
         assertTrue(success);
+    }
+
+    @Test
+    public void deleteStringNoAPIKey() throws IOException, CryptoException {
+        try {
+            Boolean success = Session.newSession().createPaste(Paste.newBuilder(TITLE, new SimpleStringContent(CONTENT)).
+                    setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
+                thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
+
+            assertFalse(success); // should never happen!
+        } catch (CompletionException e) {
+            if (e.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
+                assertEquals("PermissionsDeniedException", httpRequestFailedException.getExceptionThrownName());
+                assertEquals(HttpURLConnection.HTTP_FORBIDDEN, httpRequestFailedException.getStatusCode());
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

@@ -7,14 +7,16 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import de.greensurvivors.*;
 import de.greensurvivors.exception.HttpRequestFailedException;
-import de.greensurvivors.implementation.response.FolderReplyWrapper;
-import de.greensurvivors.implementation.response.PasteReplyWrapper;
-import de.greensurvivors.implementation.response.SuccessReply;
+import de.greensurvivors.implementation.replywrapper.ErrorReply;
+import de.greensurvivors.implementation.replywrapper.FolderReplyWrapper;
+import de.greensurvivors.implementation.replywrapper.PasteReplyWrapper;
+import de.greensurvivors.implementation.replywrapper.SuccessReply;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -65,9 +67,9 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
 
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) { // I don't know why they are using 200 here instead of 201 (created), but throw 403 if we don't have an api key for delete requests.
                     if (body != null) {
                         final @NotNull PasteReplyWrapper pastResponse = gson.fromJson(body, PasteReplyWrapper.class);
 
@@ -80,7 +82,11 @@ public class SessionImpl implements Session {
                         return null;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
@@ -95,16 +101,20 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
 
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
                     if (body != null) {
                         return gson.fromJson(body, PasteReplyImpl.class);
                     } else {
                         return null;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
@@ -119,8 +129,9 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
 
                     if (body != null) {
                         return gson.fromJson(body, SuccessReply.class).isSuccess();
@@ -128,7 +139,11 @@ public class SessionImpl implements Session {
                         return false;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
@@ -143,9 +158,9 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
 
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) { // I don't know why they are using 200 here instead of 201 (created), but throw 403 if we don't have an api key for delete requests.
                     if (body != null) {
                         final @NotNull FolderReplyWrapper folderResponse = gson.fromJson(body, FolderReplyWrapper.class);
 
@@ -158,7 +173,11 @@ public class SessionImpl implements Session {
                         return null;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
@@ -184,16 +203,20 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
 
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
                     if (body != null) {
                         return gson.fromJson(body, FolderReplyImpl.class);
                     } else {
                         return null;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
@@ -208,16 +231,20 @@ public class SessionImpl implements Session {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(stringHttpResponse -> {
-                if (stringHttpResponse.statusCode() == 200) { // status == ok
-                    final @Nullable String body = stringHttpResponse.body();
+                final @Nullable String body = stringHttpResponse.body();
 
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
                     if (body != null) {
                         return gson.fromJson(body, SuccessReply.class).isSuccess();
                     } else {
                         return false;
                     }
                 } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
                 }
             });
     }
