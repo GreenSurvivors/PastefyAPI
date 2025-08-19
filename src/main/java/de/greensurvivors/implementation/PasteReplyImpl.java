@@ -1,13 +1,13 @@
 package de.greensurvivors.implementation;
 
 import com.google.gson.annotations.SerializedName;
+import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteReply;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.time.Instant;
-import java.util.Collection;
 
 public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     private final @NotNull String id;
@@ -19,11 +19,11 @@ public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     @SerializedName("user_id")
     private final @Nullable String userID;
 
-    private PasteReplyImpl(@NotNull String title, @NotNull String content, @NotNull PasteType type, @NotNull PasteVisibility visibility, boolean isEncrypted, @Nullable Instant expirationTime, @NotNull Collection<@NotNull String> tags,
-                          @NotNull String id, boolean exists,
-                          @NotNull URI rawURL, @NotNull Instant createdAt,
-                          @Nullable String userID) {
-        super(title, content, type, visibility, isEncrypted, expirationTime, tags);
+    private PasteReplyImpl(@NotNull PasteBuilder<String> pasteBuilder,
+                           @NotNull String id, boolean exists,
+                           @NotNull URI rawURL, @NotNull Instant createdAt,
+                           @Nullable String userID) {
+        super(pasteBuilder);
         this.id = id;
         this.exists = exists;
         this.rawURL = rawURL;
@@ -37,7 +37,7 @@ public class PasteReplyImpl extends PasteImpl<String> implements PasteReply {
     }
 
     @Override
-    public @NotNull Instant getCreatedAtInstance() {
+    public @NotNull Instant getCreatedAt() {
         return createdAt;
     }
 

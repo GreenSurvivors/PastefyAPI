@@ -1,5 +1,6 @@
 package de.greensurvivors.implementation;
 
+import de.greensurvivors.Paste;
 import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteContent;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,8 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     private @Nullable Instant expirationTime = null;
     @SuppressWarnings("unchecked") // yes Java a list IS a collection and if empty there CAN'T be any generic issues.
     private @NotNull Collection<@NotNull String> tags = Collections.EMPTY_LIST;
+    private @Nullable String folderId = null;
+    private @Nullable String pasteIdForkedFrom = null;
 
     public PasteBuilderImpl (final @NotNull String title, final @NotNull PasteContent<T> content) {
         this.title = title;
@@ -29,30 +32,30 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public PasteBuilder<T> setTitle(final @NotNull String title) {
+    public @NotNull PasteBuilder<T> setTitle(final @NotNull String title) {
         this.title = title;
         return this;
     }
 
     @Override
-    public PasteBuilder<T> setContent(final @NotNull PasteContent<T> content) {
+    public @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<T> content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public PasteContent<T> getPackagedContent() {
+    public @NotNull PasteContent<T> getPackagedContent() {
         return content;
     }
 
     @Override
-    public PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility) {
+    public @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility) {
         this.visibility = visibility;
         return this;
     }
 
     @Override
-    public PasteBuilder<T> encryptWhenSending(final byte @Nullable [] password) throws NoSuchAlgorithmException {
+    public @NotNull PasteBuilder<T> encryptWhenSending(final byte @Nullable [] password) throws NoSuchAlgorithmException {
         if (password != null) {
             this.hashedPasskey = EncryptionHelper.hashPasskey(password);
         } else {
@@ -62,19 +65,19 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public PasteBuilder<T> setExpirationTime(final @Nullable Instant expirationTime) {
+    public @NotNull PasteBuilder<T> setExpirationTime(final @Nullable Instant expirationTime) {
         this.expirationTime = expirationTime;
         return this;
     }
 
     @Override
-    public PasteBuilder<T> setTags(final @NotNull Collection<String> tags) {
+    public @NotNull PasteBuilder<T> setTags(final @NotNull Collection<@NotNull String> tags) {
         this.tags = new LinkedHashSet<>(tags); // copy tags into new collection to prevent dumb issues
         return this;
     }
 
     @Override
-    public PasteBuilder<T> addTag(final @NotNull String tag) {
+    public @NotNull PasteBuilder<T> addTag(final @NotNull String tag) {
         if (tags == Collections.EMPTY_LIST){
             tags = new LinkedHashSet<>();
         }
@@ -82,6 +85,23 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
         tags.add(tag);
 
         return this;
+    }
+
+    @Override
+    public @NotNull PasteBuilder<T> setFolderId(final @Nullable String folderId) {
+        this.folderId = folderId;
+        return this;
+    }
+
+    @Override
+    public @NotNull PasteBuilder<T> setPasteIdForkedFrom(final @Nullable String pasteIdForkedFrom) {
+        this.pasteIdForkedFrom = pasteIdForkedFrom;
+        return this;
+    }
+
+    @Override
+    public @NotNull Paste<T> build() {
+        return new PasteImpl<>(this);
     }
 
     @Override
@@ -117,6 +137,21 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     @Override
     public @NotNull @Unmodifiable Collection<String> getTags() {
         return List.copyOf(tags); // copy tags into new collection to prevent dumb issues
+    }
+
+    @Override
+    public @Nullable String getFolderId() {
+        return folderId;
+    }
+
+    @Override
+    public @Nullable String getPasteIdForkedFrom() {
+        return pasteIdForkedFrom;
+    }
+
+    @Override
+    public @NotNull <NewT> PasteBuilder<NewT> newTypedBuilder(@NotNull PasteContent<NewT> newTypedPasteContent) {
+        return new PasteBuilderImpl<>(title, newTypedPasteContent);
     }
 
     @Nullable EncryptionHelper.HashedPasskey getHashedPasskey() {

@@ -9,7 +9,7 @@ import java.time.Instant;
 public interface PasteReply extends Paste<String> {
     @NotNull String getId();
 
-    @NotNull Instant getCreatedAtInstance();
+    @NotNull Instant getCreatedAt();
 
     @Nullable String getUserId();
 

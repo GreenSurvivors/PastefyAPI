@@ -3,6 +3,8 @@ package de.greensurvivors.implementation;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import de.greensurvivors.Paste;
+import de.greensurvivors.PasteBuilder;
+import de.greensurvivors.PasteContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,28 +12,30 @@ import java.time.Instant;
 import java.util.Collection;
 
 public class PasteImpl<T> implements Paste<T> {
-    private @NotNull String title;
-    private @NotNull T content;
-    private @NotNull PasteType type;
-    private @NotNull PasteVisibility visibility;
+    private final @NotNull String title;
+    private final @NotNull T content;
+    private final @NotNull PasteType type;
+    private final @NotNull PasteVisibility visibility;
     @SerializedName("encrypted")
-    private boolean isEncrypted;
+    private final boolean isEncrypted;
     @JsonAdapter(value = NullAdapterFactory.class, nullSafe = false)
     @SerializedName("expire_at")
-    private @Nullable Instant expirationTime;
-    private @NotNull Collection<@NotNull String> tags;
+    private final @Nullable Instant expirationTime;
+    private final @NotNull Collection<@NotNull String> tags;
+    @SerializedName("folder")
+    private final @Nullable String folderId;
+    private final @Nullable String pasteIdForkedFrom;
 
-    public PasteImpl(final @NotNull String title, final @NotNull T content, final @NotNull PasteType type,
-                     final @NotNull PasteVisibility visibility, final boolean isEncrypted,
-                     final @Nullable Instant expirationTime,
-                     final @NotNull Collection<@NotNull String> tags) {
-        this.title = title;
-        this.content = content;
-        this.type = type;
-        this.visibility = visibility;
-        this.isEncrypted = isEncrypted;
-        this.expirationTime = expirationTime;
-        this.tags = tags;
+    public PasteImpl(final @NotNull PasteBuilder<T> pasteBuilder) {
+        this.title = pasteBuilder.getTitle();
+        this.content = pasteBuilder.getContent();
+        this.type = pasteBuilder.getType();
+        this.visibility = pasteBuilder.getVisibility();
+        this.isEncrypted = pasteBuilder.isEncrypted();
+        this.expirationTime = pasteBuilder.getExpirationTime();
+        this.tags = pasteBuilder.getTags();
+        this.folderId = pasteBuilder.getFolderId();
+        this.pasteIdForkedFrom = pasteBuilder.getPasteIdForkedFrom();
     }
 
     @Override
@@ -67,5 +71,26 @@ public class PasteImpl<T> implements Paste<T> {
     @Override
     public @NotNull Collection<@NotNull String> getTags() {
         return tags;
+    }
+
+    @Override
+    public @Nullable String getFolderId() {
+        return folderId;
+    }
+
+    @Override
+    public @Nullable String getPasteIdForkedFrom() {
+        return pasteIdForkedFrom;
+    }
+
+    @Override
+    public @NotNull <NewT> PasteBuilder<NewT> newTypedBuilder(@NotNull PasteContent<NewT> newTypedPasteContent) {
+        return Paste.newBuilder(getTitle(), newTypedPasteContent).
+            setTitle(getTitle()).
+            setVisibility(getVisibility()).
+            setExpirationTime(getExpirationTime()).
+            setTags(getTags()).
+            setFolderId(getFolderId()).
+            setPasteIdForkedFrom(getPasteIdForkedFrom());
     }
 }

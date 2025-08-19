@@ -14,7 +14,7 @@ import java.util.concurrent.CompletionException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest {
+public class SessionTest { // todo test tags
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
@@ -30,6 +30,8 @@ public class SessionTest {
 
     @Test
     public void postString () throws IOException, CryptoException {
+        final Instant instantBefore = Instant.now();
+
          PasteReply pasteReply = session.createPaste(Paste.newBuilder(TITLE, new SimpleStringContentWrapper(CONTENT)).
                  setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).join();
 
@@ -44,6 +46,10 @@ public class SessionTest {
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());
+
+        // check if it took less than 5 minutes to post the paste.
+        // this is more of a sanity check then one of function.
+        assertTrue(pasteReply.getCreatedAt().getEpochSecond() - instantBefore.getEpochSecond() < 5 * 60);
     }
 
     @Test

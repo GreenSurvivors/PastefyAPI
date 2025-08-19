@@ -1,0 +1,67 @@
+package de.greensurvivors.implementation;
+
+import com.google.gson.annotations.SerializedName;
+import de.greensurvivors.FolderReply;
+import de.greensurvivors.PasteReply;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.time.Instant;
+import java.util.Set;
+
+public class FolderReplyImpl implements FolderReply {
+    private final @NotNull String id;
+    private final @NotNull String name;
+    private final @Nullable String userId;
+    @SerializedName("children")
+    private final @Nullable Set<FolderReplyImpl> subFolders;
+    private final  @Nullable Set<PasteReplyImpl> pastes;
+    @SerializedName("created_at")
+    private final @NotNull Instant createdAt;
+    private final boolean exists;
+
+    public FolderReplyImpl(@NotNull String id, @NotNull String name, @Nullable String userId, @Nullable Set<FolderReplyImpl> subFolders, @Nullable Set<PasteReplyImpl> pastes, @NotNull Instant createdAt, boolean exists) {
+        this.id = id;
+        this.name = name;
+        this.userId = userId;
+        this.subFolders = subFolders;
+        this.pastes = pastes;
+        this.createdAt = createdAt;
+        this.exists = exists;
+    }
+
+    @Override
+    public @NotNull String getId() {
+        return id;
+    }
+
+    @Override
+    public @Nullable String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public @Nullable Set<? extends @NotNull FolderReply> getSubFolders() {
+        return subFolders;
+    }
+
+    @Override
+    public @Nullable Set<? extends @NotNull PasteReply> getPastes() {
+        return pastes;
+    }
+
+    @Override
+    public @NotNull Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public boolean exists() {
+        return exists;
+    }
+
+    @Override
+    public @NotNull String getName() {
+        return name;
+    }
+}

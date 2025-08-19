@@ -5,17 +5,21 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
-class InstantAdapter extends TypeAdapter<Instant> { // todo don't use Timestamp here!
+class InstantAdapter extends TypeAdapter<Instant> {
+    // TimeStamp - as used by the web api - or Instant, as used by this lib, is always utc.
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.n").withZone(ZoneOffset.UTC);
+
     @Override
     public void write(JsonWriter out, Instant value) throws IOException {
-        out.value(Timestamp.from(value).toString());
+        out.value(DATE_TIME_FORMATTER.format(value));
     }
 
     @Override
     public Instant read(JsonReader in) throws IOException {
-        return Timestamp.valueOf(in.nextString()).toInstant();
+        return Instant.from(DATE_TIME_FORMATTER.parse(in.nextString()));
     }
 }

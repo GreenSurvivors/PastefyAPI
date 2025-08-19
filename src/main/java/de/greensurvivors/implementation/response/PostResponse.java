@@ -1,21 +1,22 @@
 package de.greensurvivors.implementation.response;
 
+import de.greensurvivors.PasteReply;
 import de.greensurvivors.implementation.PasteReplyImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-/// technical class, since the api wraps the getPaste for whatever reason...
-public class PostResponse extends SuccessResponse{
-    protected final @NotNull PasteReplyImpl paste;
+/// technical class, since the api wraps the created Paste for whatever reason...
+public class PostResponse extends SuccessResponse {
+    protected final @NotNull PasteReply pasteReply;
 
-    public PostResponse(boolean success, @NotNull PasteReplyImpl paste) {
+    public PostResponse(boolean success, @NotNull PasteReplyImpl pasteReply) {
         super(success);
-        this.paste = paste;
+        this.pasteReply = pasteReply;
     }
 
-    public @NotNull PasteReplyImpl getPaste() {
-        return paste;
+    public @NotNull PasteReply getPaste() {
+        return pasteReply;
     }
 
     @Override
@@ -24,19 +25,18 @@ public class PostResponse extends SuccessResponse{
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (PostResponse) obj;
         return this.success == that.success &&
-            Objects.equals(this.paste, that.paste);
+            Objects.equals(this.pasteReply, that.pasteReply);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(success, paste);
+        return Objects.hash(success, pasteReply);
     }
 
     @Override
     public String toString() {
         return "PostResponse[" +
             "success=" + success + ", " +
-            "getPaste=" + paste + ']';
+            "paste=" + pasteReply + ']';
     }
-
 }

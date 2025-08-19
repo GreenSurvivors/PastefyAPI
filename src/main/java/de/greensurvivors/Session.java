@@ -29,9 +29,9 @@ public interface Session {
 
     @NotNull CompletableFuture<@Nullable FolderReply> createFolder (final @NotNull FolderBuilder builder);
 
-    @NotNull CompletableFuture<@Nullable FolderReply> getFolder();
+    @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId);
 
     @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);
 
-    @NotNull CompletableFuture<@NotNull Integer> deleteFolder(final @NotNull String folderID);
+    @NotNull CompletableFuture<@NotNull Boolean> deleteFolder(final @NotNull String folderID);
 }

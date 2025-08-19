@@ -9,19 +9,25 @@ import java.util.Collection;
 
 // sorry for the sealed, but I can't take encryption lightly
 public sealed interface PasteBuilder<T> extends Paste<T> permits de.greensurvivors.implementation.PasteBuilderImpl {
-    PasteBuilder<T> setTitle(@NotNull String title);
+    @NotNull PasteBuilder<T> setTitle(final @NotNull String title);
 
-    PasteBuilder<T> setContent(@NotNull PasteContent<T> content);
+    @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<T> content);
 
-    PasteContent<T> getPackagedContent();
+    @NotNull PasteContent<T> getPackagedContent();
 
-    PasteBuilder<T> setVisibility(@NotNull PasteVisibility visibility);
+    @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility);
 
-    PasteBuilder<T> encryptWhenSending(byte @Nullable [] password) throws NoSuchAlgorithmException;
+    @NotNull PasteBuilder<T> encryptWhenSending(final byte @Nullable [] password) throws NoSuchAlgorithmException;
 
-    PasteBuilder<T> setExpirationTime(@Nullable Instant expirationTime); // note: I have no Idea what timezone they use. Maybe german?? Maybe GMT???
+    @NotNull PasteBuilder<T> setExpirationTime(final @Nullable Instant expirationTime); // note: I have no Idea what timezone they use. Maybe german?? Maybe GMT???
 
-    PasteBuilder<T> setTags(@NotNull Collection<String> tags);
+    @NotNull PasteBuilder<T> setTags(final @NotNull Collection<@NotNull String> tags);
 
-    PasteBuilder<T> addTag(@NotNull String tag);
+    @NotNull PasteBuilder<T> addTag(final @NotNull String tag);
+
+    @NotNull PasteBuilder<T> setFolderId(final @Nullable String folderId);
+
+    @NotNull PasteBuilder<T> setPasteIdForkedFrom(final @Nullable String pasteIdForkedFrom);
+
+    @NotNull Paste<T> build();
 }
