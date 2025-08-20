@@ -11,10 +11,7 @@ import de.greensurvivors.admin.AdminUserReply;
 import de.greensurvivors.admin.UserEditBuilder;
 import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.implementation.reply.*;
-import de.greensurvivors.implementation.reply.replywrapper.ErrorReply;
-import de.greensurvivors.implementation.reply.replywrapper.FolderReplyWrapper;
-import de.greensurvivors.implementation.reply.replywrapper.PasteReplyWrapper;
-import de.greensurvivors.implementation.reply.replywrapper.SuccessReply;
+import de.greensurvivors.implementation.reply.replywrapper.*;
 import de.greensurvivors.reply.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +28,7 @@ import java.security.Security;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -560,6 +558,146 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
                 }
             });
 
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@Nullable String> createNewAPIKey() {
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "user/keys"));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.POST(HttpRequest.BodyPublishers.noBody()).build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
+                    if (body != null) {
+                        return gson.fromJson(body, APIKeyReplyWrapper.class).getKey();
+                    } else {
+                        return null;
+                    }
+                } else {
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
+                }
+            });
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@Nullable Set<@NotNull String>> getMyAPIKeys() {
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "user/keys"));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.GET().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
+                    if (body != null) {
+                        return Set.of(gson.fromJson(body, String[].class));
+                    } else {
+                        return null;
+                    }
+                } else {
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
+                }
+            });
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Boolean> deleteAPIKey(final @NotNull String keyToDelete) {
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "user/keys/" + keyToDelete));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.DELETE().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
+                    if (body != null) {
+                        return gson.fromJson(body, SuccessReply.class).isSuccess();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
+                }
+            });
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@Nullable List<@NotNull NotificationReply>> getNotifications() {
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "user/notification"));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.GET().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
+                    if (body != null) {
+                        return List.of(gson.fromJson(body, NotificationReplyImpl[].class));
+                    } else {
+                        return null;
+                    }
+                } else {
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
+                }
+            });
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead(){
+        final @NotNull HttpRequest.Builder requestBuilder = HttpRequest.newBuilder().uri(URI.create(baseURL + "user/notification/readall"));
+        if (apiKey != null) {
+            requestBuilder.header("Authorization", "Bearer " + apiKey);
+        }
+        final HttpRequest request = requestBuilder.GET().build(); // why not POST??
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(stringHttpResponse -> {
+                final @Nullable String body = stringHttpResponse.body();
+
+                if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
+                    if (body != null) {
+                        return gson.fromJson(body, SuccessReply.class).isSuccess();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if (body != null) {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
+                    } else {
+                        throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+                    }
+                }
+            });
     }
 
     @Override

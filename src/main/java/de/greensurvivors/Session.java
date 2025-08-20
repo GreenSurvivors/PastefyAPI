@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -77,6 +78,16 @@ public interface Session {
 
     /// needs an api key. obviously.
     @NotNull CompletableFuture<@NotNull PrivateUserReply> getMyAccountInfo();
+
+    @NotNull CompletableFuture<@Nullable String> createNewAPIKey();
+
+    @NotNull CompletableFuture<@Nullable Set<@NotNull String>> getMyAPIKeys();
+
+    @NotNull CompletableFuture<@NotNull Boolean> deleteAPIKey(final @NotNull String keyToDelete);
+
+    @NotNull CompletableFuture<@Nullable List<@NotNull NotificationReply>> getNotifications();
+
+    @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead();
 
     @NotNull CompletableFuture<@Nullable Set<TagReply>> getAllTags();
 
