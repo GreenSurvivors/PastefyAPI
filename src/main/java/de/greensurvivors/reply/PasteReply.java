@@ -1,5 +1,6 @@
-package de.greensurvivors;
+package de.greensurvivors.reply;
 
+import de.greensurvivors.Paste;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

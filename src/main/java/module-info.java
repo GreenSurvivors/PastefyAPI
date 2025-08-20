@@ -6,4 +6,6 @@ open module PastefyAPI.main {
 
     exports de.greensurvivors;
     exports de.greensurvivors.exception;
+    exports de.greensurvivors.reply;
+    exports de.greensurvivors.admin;
 }

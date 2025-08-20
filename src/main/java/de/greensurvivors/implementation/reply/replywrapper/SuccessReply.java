@@ -1,4 +1,4 @@
-package de.greensurvivors.implementation.replywrapper;
+package de.greensurvivors.implementation.reply.replywrapper;
 
 import org.jetbrains.annotations.Nullable;
 

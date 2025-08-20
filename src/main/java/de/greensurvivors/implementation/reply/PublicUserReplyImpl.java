@@ -1,7 +1,7 @@
-package de.greensurvivors.implementation;
+package de.greensurvivors.implementation.reply;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.PublicUserReply;
+import de.greensurvivors.reply.PublicUserReply;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;

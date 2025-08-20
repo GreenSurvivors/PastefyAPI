@@ -1,8 +1,8 @@
-package de.greensurvivors.implementation;
+package de.greensurvivors.implementation.reply;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.FolderReply;
-import de.greensurvivors.PasteReply;
+import de.greensurvivors.reply.FolderReply;
+import de.greensurvivors.reply.PasteReply;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +13,7 @@ import java.util.Set;
 public class FolderReplyImpl implements FolderReply {
     private final @NotNull String id;
     private final @NotNull String name;
+    @SerializedName("user_id")
     private final @Nullable String userId; // the web api is a mess. Why does the paste reply contain the fleshed out public user but the folder reply just the user id?
     @SerializedName("children")
     private final @Nullable Set<FolderReplyImpl> subFolders;

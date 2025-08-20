@@ -23,7 +23,7 @@ import java.util.List;
 
 // sorry for the final, but I can't take encryption lightly.
 public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
-    private @NotNull String title;
+    private @Nullable String title;
     private @NotNull PasteContent<T> content;
     private @NotNull PasteVisibility visibility = PasteVisibility.UNLISTED;
     private transient @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
@@ -37,13 +37,12 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     @SerializedName("ai")
     private boolean useAI = false;
 
-    public PasteBuilderImpl (final @NotNull String title, final @NotNull PasteContent<T> content) {
-        this.title = title;
+    public PasteBuilderImpl (final @NotNull PasteContent<T> content) {
         this.content = content;
     }
 
     @Override
-    public @NotNull PasteBuilder<T> setTitle(final @NotNull String title) {
+    public @NotNull PasteBuilder<T> setTitle(final @Nullable String title) {
         this.title = title;
         return this;
     }
@@ -127,7 +126,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public @NotNull String getTitle() {
+    public @Nullable String getTitle() {
         return title;
     }
 
@@ -170,7 +169,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
         return hashedPasskey;
     }
 
-    final static class PasteBuilderJsonSerializer implements JsonSerializer<PasteBuilderImpl<?>> {
+    public final static class PasteBuilderJsonSerializer implements JsonSerializer<PasteBuilderImpl<?>> {
 
         @Override
         public JsonElement serialize(PasteBuilderImpl<?> src, Type typeOfSrc, JsonSerializationContext context) {

@@ -1,4 +1,4 @@
-package de.greensurvivors;
+package de.greensurvivors.reply;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public interface Paste<T> {
     @NotNull PasteType getType ();
-    @NotNull String getTitle ();
+    @Nullable String getTitle ();
     @NotNull T getContent();
     @NotNull PasteVisibility getVisibility();
     boolean isEncrypted ();
@@ -19,8 +19,8 @@ public interface Paste<T> {
     @Nullable String getFolderId();
     @Nullable String getPasteIdForkedFrom();
 
-    static <T> PasteBuilder<T> newBuilder(@NotNull String title, @NotNull PasteContent<T> content) {
-        return new PasteBuilderImpl<T>(title, content);
+    static <T> PasteBuilder<T> newBuilder(@NotNull PasteContent<T> content) {
+        return new PasteBuilderImpl<T>(content);
     }
 
     enum PasteType {

@@ -1,8 +1,9 @@
-package de.greensurvivors.implementation;
+package de.greensurvivors.implementation.reply;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.PasteReply;
-import de.greensurvivors.PublicUserReply;
+import de.greensurvivors.implementation.EncryptionHelper;
+import de.greensurvivors.reply.PasteReply;
+import de.greensurvivors.reply.PublicUserReply;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +13,7 @@ import java.time.Instant;
 import java.util.Collection;
 
 public class PasteReplyImpl implements PasteReply {
-    protected @NotNull String title;
+    protected @Nullable String title;
     protected @NotNull String content;
     private final @NotNull PasteType type;
     private final @NotNull PasteVisibility visibility;
@@ -37,7 +38,7 @@ public class PasteReplyImpl implements PasteReply {
 
     // unused, this class gets instanced by gson!
     private PasteReplyImpl(
-        @NotNull String title, @NotNull String content, @NotNull PasteType type,
+        @Nullable String title, @NotNull String content, @NotNull PasteType type,
         @NotNull PasteVisibility visibility,
         boolean isEncrypted,
         @Nullable Instant expirationTime,
@@ -71,7 +72,7 @@ public class PasteReplyImpl implements PasteReply {
     }
 
     @Override
-    public @NotNull String getTitle() {
+    public @Nullable String getTitle() {
         return title;
     }
 

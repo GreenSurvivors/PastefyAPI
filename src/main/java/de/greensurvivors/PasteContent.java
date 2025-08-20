@@ -16,6 +16,4 @@ public interface PasteContent<T> {
     static @NotNull PasteContent<@NotNull String> fromString(final @NotNull String content) {
         return new SimpleStringContent(content);
     }
-
-    // todo name -> content map
 }
