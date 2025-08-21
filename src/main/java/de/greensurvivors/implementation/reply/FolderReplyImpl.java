@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
@@ -17,17 +18,17 @@ public class FolderReplyImpl implements FolderReply {
     private final @Nullable String userId; // the web api is a mess. Why does the paste reply contain the fleshed out public user but the folder reply just the user id?
     @SerializedName("children")
     private final @NotNull Set<@NotNull FolderReplyImpl> subFolders;
-    private final  @NotNull Set<@NotNull PasteReplyImpl> pastes;
+    private final @NotNull Set<@NotNull PasteReplyImpl> pastes;
     @SerializedName("created_at")
     private final @NotNull Instant createdAt;
     private final boolean exists;
 
     private FolderReplyImpl(@NotNull String id, @NotNull String name,
-                            @Nullable String userId,
-                            @NotNull Set<@NotNull FolderReplyImpl> subFolders,
-                            @NotNull Set<@NotNull PasteReplyImpl> pastes,
-                            @NotNull Instant createdAt,
-                            boolean exists) {
+                           @Nullable String userId,
+                           @NotNull Set<@NotNull FolderReplyImpl> subFolders,
+                           @NotNull Set<@NotNull PasteReplyImpl> pastes,
+                           @NotNull Instant createdAt,
+                           boolean exists) {
         this.id = id;
         this.name = name;
         this.userId = userId;
@@ -70,5 +71,36 @@ public class FolderReplyImpl implements FolderReply {
     @Override
     public @NotNull String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (FolderReplyImpl) obj;
+        return Objects.equals(this.id, that.id) &&
+            Objects.equals(this.name, that.name) &&
+            Objects.equals(this.userId, that.userId) &&
+            Objects.equals(this.subFolders, that.subFolders) &&
+            Objects.equals(this.pastes, that.pastes) &&
+            Objects.equals(this.createdAt, that.createdAt) &&
+            this.exists == that.exists;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, userId, subFolders, pastes, createdAt, exists);
+    }
+
+    @Override
+    public String toString() {
+        return "FolderReplyImpl[" +
+            "id=" + id + ", " +
+            "name=" + name + ", " +
+            "userId=" + userId + ", " +
+            "subFolders=" + subFolders + ", " +
+            "pastes=" + pastes + ", " +
+            "createdAt=" + createdAt + ", " +
+            "exists=" + exists + ']';
     }
 }

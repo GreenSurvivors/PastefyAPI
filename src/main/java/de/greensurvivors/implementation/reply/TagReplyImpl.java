@@ -98,5 +98,4 @@ public class TagReplyImpl implements TagReply {
             "website=" + website + ", " +
             "pasteCount=" + pasteCount + ']';
     }
-
 }

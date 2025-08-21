@@ -22,7 +22,7 @@ public class PlatformInfoReplyImpl implements PlatformInfoReply {
     @SerializedName("custom_footer")
     private final @NotNull Map<@NotNull String, @NotNull String> customFooter;
 
-    public PlatformInfoReplyImpl(boolean arePublicPastesEnabled,
+    private PlatformInfoReplyImpl(boolean arePublicPastesEnabled,
                                  boolean isLoginRequiredForRead,
                                  boolean isLoginRequiredForWrite,
                                  boolean isEncryptedByDefault,

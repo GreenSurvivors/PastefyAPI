@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
+import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class AdminUserReplyImpl implements AdminUserReply {
@@ -28,7 +29,13 @@ public class AdminUserReplyImpl implements AdminUserReply {
     @SerializedName("updated_at")
     private final @NotNull Instant lastUpdatedAt;
 
-    private AdminUserReplyImpl(@NotNull String id, @NotNull String name, @NotNull String avatarURL, @NotNull String displayName, @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus, @NotNull Instant createdAt, @NotNull Instant lastUpdatedAt) {
+    private AdminUserReplyImpl(@NotNull String id, @NotNull String name,
+                              @NotNull String avatarURL,
+                              @NotNull String displayName,
+                              @NotNull String authenticationProviderName,
+                              @NotNull AccountStaus accountStaus,
+                              @NotNull Instant createdAt,
+                              @NotNull Instant lastUpdatedAt) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;
@@ -77,5 +84,38 @@ public class AdminUserReplyImpl implements AdminUserReply {
     @Override
     public @NotNull String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (AdminUserReplyImpl) obj;
+        return Objects.equals(this.id, that.id) &&
+            Objects.equals(this.name, that.name) &&
+            Objects.equals(this.avatarURL, that.avatarURL) &&
+            Objects.equals(this.displayName, that.displayName) &&
+            Objects.equals(this.authenticationProviderName, that.authenticationProviderName) &&
+            Objects.equals(this.accountStaus, that.accountStaus) &&
+            Objects.equals(this.createdAt, that.createdAt) &&
+            Objects.equals(this.lastUpdatedAt, that.lastUpdatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, avatarURL, displayName, authenticationProviderName, accountStaus, createdAt, lastUpdatedAt);
+    }
+
+    @Override
+    public String toString() {
+        return "AdminUserReplyImpl[" +
+            "id=" + id + ", " +
+            "name=" + name + ", " +
+            "avatarURL=" + avatarURL + ", " +
+            "displayName=" + displayName + ", " +
+            "authenticationProviderName=" + authenticationProviderName + ", " +
+            "accountStaus=" + accountStaus + ", " +
+            "createdAt=" + createdAt + ", " +
+            "lastUpdatedAt=" + lastUpdatedAt + ']';
     }
 }

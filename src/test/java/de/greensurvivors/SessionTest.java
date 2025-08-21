@@ -292,7 +292,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
         assertNotNull(privateUserReply);
         assertTrue(privateUserReply.isLoggedIn());
         assertNotNull(privateUserReply.getName());
-        assertNotNull(privateUserReply.AuthenticationProviderName());
+        assertNotNull(privateUserReply.getAuthenticationProviderName());
         assertNotNull(privateUserReply.getStatus());
 
         if (privateUserReply.getStatus() != AccountStaus.VALID_USER) {

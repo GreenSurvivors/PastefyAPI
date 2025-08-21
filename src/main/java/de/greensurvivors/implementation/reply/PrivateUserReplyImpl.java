@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings("ClassCanBeRecord") // no public constructor!
@@ -33,10 +34,10 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     private final @NotNull Set<@NotNull String> availableProviderNames;
 
     private PrivateUserReplyImpl(@NotNull String id, @NotNull String name,
-                                 @NotNull String avatarURL, @NotNull String displayName,
-                                 @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus,
-                                 @NotNull Set<@NotNull String> availableProviderNames,
-                                 boolean isLoggedIn, @Nullable String favoriteColor) {
+                                @NotNull String avatarURL, @NotNull String displayName,
+                                @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus,
+                                @NotNull Set<@NotNull String> availableProviderNames,
+                                boolean isLoggedIn, @Nullable String favoriteColor) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;
@@ -58,7 +59,7 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     }
 
     @Override
-    public @NotNull String AuthenticationProviderName() {
+    public @NotNull String getAuthenticationProviderName() {
         return authenticationProviderName;
     }
 
@@ -89,5 +90,40 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     @Override
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (PrivateUserReplyImpl) obj;
+        return Objects.equals(this.id, that.id) &&
+            Objects.equals(this.name, that.name) &&
+            Objects.equals(this.avatarURL, that.avatarURL) &&
+            Objects.equals(this.displayName, that.displayName) &&
+            Objects.equals(this.authenticationProviderName, that.authenticationProviderName) &&
+            Objects.equals(this.accountStaus, that.accountStaus) &&
+            Objects.equals(this.availableProviderNames, that.availableProviderNames) &&
+            this.isLoggedIn == that.isLoggedIn &&
+            Objects.equals(this.favoriteColor, that.favoriteColor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, avatarURL, displayName, authenticationProviderName, accountStaus, availableProviderNames, isLoggedIn, favoriteColor);
+    }
+
+    @Override
+    public String toString() {
+        return "PrivateUserReplyImpl[" +
+            "id=" + id + ", " +
+            "name=" + name + ", " +
+            "avatarURL=" + avatarURL + ", " +
+            "displayName=" + displayName + ", " +
+            "authenticationProviderName=" + authenticationProviderName + ", " +
+            "accountStaus=" + accountStaus + ", " +
+            "availableProviderNames=" + availableProviderNames + ", " +
+            "isLoggedIn=" + isLoggedIn + ", " +
+            "favoriteColor=" + favoriteColor + ']';
     }
 }
