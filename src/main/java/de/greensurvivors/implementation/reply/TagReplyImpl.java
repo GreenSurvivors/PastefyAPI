@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+@SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class TagReplyImpl implements TagReply {
     @SerializedName("tag")
     private final @NotNull String tag;

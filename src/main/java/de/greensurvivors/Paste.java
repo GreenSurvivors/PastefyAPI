@@ -17,10 +17,10 @@ public interface Paste<T> {
     @NotNull Collection<String> getTags();
 
     @Nullable String getFolderId();
-    @Nullable String getPasteIdForkedFrom();
+    @Nullable String getPasteIdForkedFrom(); // todo test
 
     static <T> PasteBuilder<T> newBuilder(@NotNull PasteContent<T> content) {
-        return new PasteBuilderImpl<T>(content);
+        return new PasteBuilderImpl<>(content);
     }
 
     enum PasteType {

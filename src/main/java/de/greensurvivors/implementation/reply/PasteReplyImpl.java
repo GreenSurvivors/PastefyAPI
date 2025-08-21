@@ -138,7 +138,9 @@ public class PasteReplyImpl implements PasteReply {
 
     @Override
     public @NotNull PasteReply decrypt(byte @NotNull [] password) throws InvalidCipherTextException {
-        this.title = EncryptionHelper.decrypt(this.getTitle(), password);
+        if (this.getTitle() != null) {
+            this.title = EncryptionHelper.decrypt(this.getTitle(), password);
+        }
         this.content = EncryptionHelper.decrypt(this.getContent(), password);
 
         return this;

@@ -9,7 +9,7 @@ public interface PrivateUserReply extends PublicUserReply {
     @Nullable String getFavoriteColor(); // always #f52966
     /// interaapps, google, github,  twitch, oidc aka custom, discord
     @NotNull String AuthenticationProviderName ();
-    //@NotNull Set<@NotNull String> getAvailableProviderNamess();
+    //@NotNull Set<@NotNull String> getAvailableProviderNames();
     @NotNull AccountStaus getStatus();
 
 }

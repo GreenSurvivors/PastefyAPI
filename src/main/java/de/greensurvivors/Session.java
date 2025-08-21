@@ -2,12 +2,10 @@ package de.greensurvivors;
 
 import de.greensurvivors.implementation.SessionImpl;
 import de.greensurvivors.reply.*;
-import org.bouncycastle.crypto.CryptoException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -27,14 +25,14 @@ public interface Session {
     }
 
 
-    <T> @NotNull CompletableFuture<@Nullable PasteReply> createPaste(final @NotNull PasteBuilder<T> builder) throws IOException, CryptoException;
+    <T> @NotNull CompletableFuture<@Nullable PasteReply> createPaste(final @NotNull PasteBuilder<T> builder);
 
     @NotNull CompletableFuture<@Nullable PasteReply> getPaste(final @NotNull String pasteID);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
     @NotNull CompletableFuture<@Nullable @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filter_tags(list as in: =foo,bar,buzz,...), shorten_content (bool), page (int), page_limit (int), search(string), sort(string), filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid)
 
-    <T> @NotNull CompletableFuture<@Nullable PasteReply> editPaste(final @NotNull PasteBuilder<T> builder) throws IOException, CryptoException;
+    <T> @NotNull CompletableFuture<@Nullable PasteReply> editPaste(final @NotNull PasteBuilder<T> builder);
 
     /// Note: needs an api of the user who has created this paste (or is admin)
     @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);
@@ -57,7 +55,6 @@ public interface Session {
     // not implemented.
     //@NotNull CompletableFuture<@NotNull Boolean> addFriend(final @NotNull String pasteID, final @NotNull String friendID);
 
-    // todo check if you can create public folders.
     @NotNull CompletableFuture<@Nullable FolderReply> createFolder (final @NotNull FolderBuilder builder);
 
     // todo check if you can get public folders.
@@ -89,7 +86,7 @@ public interface Session {
 
     @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead();
 
-    @NotNull CompletableFuture<@Nullable Set<TagReply>> getAllTags();
+    @NotNull CompletableFuture<@Nullable Set<@NotNull TagReply>> getAllTags();
 
     @NotNull CompletableFuture<@Nullable TagReply> getTag(final @NotNull String tag);
 

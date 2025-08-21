@@ -1,6 +1,7 @@
 package de.greensurvivors.implementation;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.modes.AEADCipher;
@@ -134,7 +135,7 @@ public final class EncryptionHelper {
     }
 
     public static @NotNull String decrypt (final @NotNull String encryptedData, final byte @NotNull [] passkey) throws InvalidCipherTextException {
-        Map<String, Object> decodeInMap = gson.fromJson(encryptedData, LinkedHashMap.class);
+        Map<String, Object> decodeInMap = gson.fromJson(encryptedData, TypeToken.getParameterized(LinkedHashMap.class, String.class, Object.class).getType());
 
         final byte[] decodeKey = EncryptionHelper.hashPasskeyRaw(
             passkey,

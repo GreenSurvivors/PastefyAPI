@@ -13,7 +13,7 @@ public interface TagReply {
     @Nullable String getDescription();
     /// with no (non-admin-direct-database-input) way to input this, only two tags have an image associated.
     @Nullable URL getImageUrl() throws MalformedURLException;
-    /// allways empty or null.
+    /// always empty or null.
     @Nullable String getWebsite();
     /// with no (non-admin-direct-database-input) way to input this, only two tags have an icon associated.
     @Nullable String getIcon();

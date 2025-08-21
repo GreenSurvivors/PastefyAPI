@@ -130,7 +130,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@Nullable Set<@NotNull PasteReply>> getMyStarredPastes() {
-        final HttpRequest request = createRequestBuilder(null, "user/sharedpastes").GET().build();
+        final HttpRequest request = createRequestBuilder(null, "user/starred-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -266,7 +266,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<TagReply>> getAllTags() {
+    public @NotNull CompletableFuture<@Nullable Set<@NotNull TagReply>> getAllTags() {
         final HttpRequest request = createRequestBuilder(null,  "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -327,6 +327,8 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
             thenApply(successReply -> successReply != null && successReply.isSuccess());
     }
 
+    // ----------------------- END API -----------------------
+
     protected @NotNull HttpRequest.Builder createRequestBuilder(final @Nullable Map<@NotNull String, ? extends @NotNull Object> queryParameters, final @NotNull String... path) {
         final @NotNull String url = baseURL + String.join("/", path);
 
@@ -334,11 +336,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
         if (queryParameters == null || queryParameters.isEmpty()) {
             requestBuilder = HttpRequest.newBuilder(URI.create(url));
         } else {
-            final StringJoiner queryJoiner = new StringJoiner("?", "&", "");
+            final StringJoiner queryJoiner = new StringJoiner("&");
             for (Map.Entry<@NotNull String, ?> entry : queryParameters.entrySet()) {
                 queryJoiner.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8));
             }
-            requestBuilder = HttpRequest.newBuilder(URI.create(url + queryJoiner));
+
+            requestBuilder = HttpRequest.newBuilder(URI.create(url + "?" + queryJoiner));
         }
 
         requestBuilder.header("Accept", "application/json");

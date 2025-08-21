@@ -178,7 +178,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
             if (src.isEncrypted()) {
                 try {
                     resultObj.add("title",
-                        context.serialize(EncryptionHelper.encrypt(src.getTitle(), src.getHashedPasskey())));
+                        context.serialize(src.getTitle() == null ? null : EncryptionHelper.encrypt(src.getTitle(), src.getHashedPasskey())));
                     resultObj.add("content",
                         context.serialize(EncryptionHelper.encrypt(src.getPackagedContent().serialize(), src.getHashedPasskey())));
                 } catch (NoSuchAlgorithmException | InvalidCipherTextException | IOException e) {

@@ -16,16 +16,16 @@ public class FolderReplyImpl implements FolderReply {
     @SerializedName("user_id")
     private final @Nullable String userId; // the web api is a mess. Why does the paste reply contain the fleshed out public user but the folder reply just the user id?
     @SerializedName("children")
-    private final @Nullable Set<FolderReplyImpl> subFolders;
-    private final  @Nullable Set<PasteReplyImpl> pastes;
+    private final @NotNull Set<@NotNull FolderReplyImpl> subFolders;
+    private final  @NotNull Set<@NotNull PasteReplyImpl> pastes;
     @SerializedName("created_at")
     private final @NotNull Instant createdAt;
     private final boolean exists;
 
     private FolderReplyImpl(@NotNull String id, @NotNull String name,
                             @Nullable String userId,
-                            @Nullable Set<FolderReplyImpl> subFolders,
-                            @Nullable Set<PasteReplyImpl> pastes,
+                            @NotNull Set<@NotNull FolderReplyImpl> subFolders,
+                            @NotNull Set<@NotNull PasteReplyImpl> pastes,
                             @NotNull Instant createdAt,
                             boolean exists) {
         this.id = id;
@@ -48,12 +48,12 @@ public class FolderReplyImpl implements FolderReply {
     }
 
     @Override
-    public @Nullable Set<? extends @NotNull FolderReply> getSubFolders() {
+    public @NotNull Set<? extends @NotNull FolderReply> getSubFolders() {
         return subFolders;
     }
 
     @Override
-    public @Nullable Set<? extends @NotNull PasteReply> getPastes() {
+    public @NotNull Set<? extends @NotNull PasteReply> getPastes() {
         return pastes;
     }
 

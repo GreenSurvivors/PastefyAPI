@@ -12,9 +12,9 @@ public interface FolderReply extends Folder {
 
     @Nullable String getUserId();
 
-    @Nullable Set<? extends @NotNull FolderReply> getSubFolders ();
+    @NotNull Set<? extends @NotNull FolderReply> getSubFolders ();
 
-    @Nullable Set<? extends @NotNull PasteReply> getPastes ();
+    @NotNull Set<? extends @NotNull PasteReply> getPastes ();
 
     @NotNull Instant getCreatedAt();
 

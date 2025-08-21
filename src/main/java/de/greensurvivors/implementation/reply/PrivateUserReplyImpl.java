@@ -59,7 +59,7 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
         return authenticationProviderName;
     }
 
-    public @NotNull Set<@NotNull String> getAvailableProviderNamess() { // Why just why is this on the user???
+    public @NotNull Set<@NotNull String> getAvailableProviderNames() { // Why just why is this on the user???
         return Set.of();
     }
 

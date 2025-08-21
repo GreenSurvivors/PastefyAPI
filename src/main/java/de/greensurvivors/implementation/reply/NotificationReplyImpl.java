@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 
+@SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class NotificationReplyImpl implements de.greensurvivors.reply.NotificationReply {
     private final int id;
     private final @NotNull String message;
