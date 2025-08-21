@@ -30,9 +30,13 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     @SerializedName("color")
     private final @Nullable String favoriteColor; // always #f52966 for now
     @SerializedName("auth_types")
-    private final Set<String> availableProviderNames;
+    private final @NotNull Set<@NotNull String> availableProviderNames;
 
-    private PrivateUserReplyImpl(@NotNull String id, @NotNull String name, @NotNull String avatarURL, String displayName, @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus, boolean isLoggedIn, @Nullable String favoriteColor, Set<String> availableProviderNames) {
+    private PrivateUserReplyImpl(@NotNull String id, @NotNull String name,
+                                 @NotNull String avatarURL, @NotNull String displayName,
+                                 @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus,
+                                 @NotNull Set<@NotNull String> availableProviderNames,
+                                 boolean isLoggedIn, @Nullable String favoriteColor) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;
@@ -49,7 +53,6 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
         return isLoggedIn;
     }
 
-    @Override
     public @Nullable String getFavoriteColor() {
         return favoriteColor;
     }
@@ -60,7 +63,7 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     }
 
     public @NotNull Set<@NotNull String> getAvailableProviderNames() { // Why just why is this on the user???
-        return Set.of();
+        return availableProviderNames;
     }
 
     @Override

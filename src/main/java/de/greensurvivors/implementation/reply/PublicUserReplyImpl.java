@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class PublicUserReplyImpl implements PublicUserReply {
@@ -17,7 +18,9 @@ public class PublicUserReplyImpl implements PublicUserReply {
     @SerializedName("display_name")
     private final String displayName;
 
-    private PublicUserReplyImpl(@NotNull String id, @NotNull String name, @NotNull String avatarURL, String displayName) {
+    private PublicUserReplyImpl(@NotNull String id, @NotNull String name,
+                               @NotNull String avatarURL,
+                               String displayName) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;
@@ -42,5 +45,30 @@ public class PublicUserReplyImpl implements PublicUserReply {
     @Override
     public String getDisplayName() {
         return displayName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (PublicUserReplyImpl) obj;
+        return Objects.equals(this.id, that.id) &&
+            Objects.equals(this.name, that.name) &&
+            Objects.equals(this.avatarURL, that.avatarURL) &&
+            Objects.equals(this.displayName, that.displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, avatarURL, displayName);
+    }
+
+    @Override
+    public String toString() {
+        return "PublicUserReplyImpl[" +
+            "id=" + id + ", " +
+            "name=" + name + ", " +
+            "avatarURL=" + avatarURL + ", " +
+            "displayName=" + displayName + ']';
     }
 }

@@ -62,7 +62,8 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public <T> @NotNull CompletableFuture<@NotNull PasteReply> createPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
-        final HttpRequest request = createRequestBuilder(null, "paste").POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
+        final HttpRequest request = createRequestBuilder(null, "paste").
+            POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyWrapper.class)).
@@ -314,7 +315,8 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Boolean> editUser(final @NotNull String userId, final @NotNull UserEditBuilder userEditBuilder) {
-        final HttpRequest request = createRequestBuilder(null, "admin/users", userId).PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(userEditBuilder))).build();
+        final HttpRequest request = createRequestBuilder(null, "admin/users", userId).
+            PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(userEditBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).

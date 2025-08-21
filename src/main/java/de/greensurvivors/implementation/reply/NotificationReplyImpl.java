@@ -1,6 +1,7 @@
 package de.greensurvivors.implementation.reply;
 
 import com.google.gson.annotations.SerializedName;
+import de.greensurvivors.reply.NotificationReply;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +11,7 @@ import java.net.URL;
 import java.time.Instant;
 
 @SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
-public class NotificationReplyImpl implements de.greensurvivors.reply.NotificationReply {
+public class NotificationReplyImpl implements NotificationReply {
     private final int id;
     private final @NotNull String message;
     @SerializedName("user_id")

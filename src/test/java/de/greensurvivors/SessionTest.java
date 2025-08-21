@@ -1,20 +1,22 @@
 package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
-import de.greensurvivors.implementation.content.SimpleStringContent;
-import de.greensurvivors.reply.FolderReply;
-import de.greensurvivors.reply.PasteReply;
+import de.greensurvivors.reply.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class SessionTest { // todo test tags, encryption, isStarred, ai
@@ -35,7 +37,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
     public void postString () {
         final Instant instantBefore = Instant.now();
 
-         final PasteReply pasteReply = session.createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+         final PasteReply pasteReply = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
              setTitle(TITLE).
              setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).join();
 
@@ -58,7 +60,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
 
     @Test
     public void getString () {
-        PasteReply pasteReply = session.createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+        PasteReply pasteReply = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
                 setTitle(TITLE).
                 setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             thenCompose(postResponse -> session.getPaste(postResponse.getId())).join();
@@ -96,7 +98,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
     public void deleteString () {
         assumeTrue(hasAPIKey); // the api needs to verify you are indeed the owner of this paste in order to delete it.
 
-        Boolean success = session.createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+        Boolean success = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
                 setTitle(TITLE).
                 setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
             thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
@@ -107,7 +109,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
     @Test
     public void deleteStringNoAPIKey() {
         try {
-            Boolean success = Session.newSession().createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+            Boolean success = Session.newSession().createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
                     setTitle(TITLE).
                     setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
                 thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
@@ -115,8 +117,13 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
             assertFalse(success); // should never happen!
         } catch (CompletionException e) {
             if (e.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
-                assertEquals("PermissionsDeniedException", httpRequestFailedException.getExceptionThrownName());
-                assertEquals(HttpURLConnection.HTTP_FORBIDDEN, httpRequestFailedException.getStatusCode());
+                if (hasAPIKey) {
+                    assertEquals("PermissionsDeniedException", httpRequestFailedException.getExceptionThrownName());
+                    assertEquals(HttpURLConnection.HTTP_FORBIDDEN, httpRequestFailedException.getStatusCode());
+                } else {
+                    assertEquals("AuthenticationException", httpRequestFailedException.getExceptionThrownName());
+                    assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, httpRequestFailedException.getStatusCode());
+                }
             } else {
                 throw new RuntimeException(e);
             }
@@ -127,7 +134,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
     public void starTest() throws InterruptedException {
         assumeTrue(hasAPIKey);
 
-        final PasteReply pasteReply = session.createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+        final PasteReply pasteReply = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
             setTitle(TITLE).
             setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).join();
 
@@ -190,7 +197,7 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
         assertEquals(createFolderReply.getId(), getFolderReply1.getId());
         assertEquals(createFolderReply.getUserId(), getFolderReply1.getUserId());
 
-        final PasteReply pasteReply = session.createPaste(Paste.newBuilder(new SimpleStringContent(CONTENT)).
+        final PasteReply pasteReply = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
             setTitle(TITLE).
             setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS)).
             setFolderId(createFolderReply.getId())).join();
@@ -275,5 +282,89 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Test
+    public void publicUserInformationTest() throws MalformedURLException {
+        assumeTrue(hasAPIKey);
+
+        final PrivateUserReply privateUserReply = session.getMyAccountInfo().join();
+        assertNotNull(privateUserReply);
+        assertTrue(privateUserReply.isLoggedIn());
+        assertNotNull(privateUserReply.getName());
+        assertNotNull(privateUserReply.AuthenticationProviderName());
+        assertNotNull(privateUserReply.getStatus());
+
+        if (privateUserReply.getStatus() != AccountStaus.VALID_USER) {
+            System.out.println("Warning: your account is " + privateUserReply.getStatus() + " this might be a bug with this api. Please verify manually!");
+        }
+
+        assertNotNull(privateUserReply.getId());
+        assertNotNull(privateUserReply.getName());
+        assertNotNull(privateUserReply.getAvatarURL());
+        assertNotNull(privateUserReply.getDisplayName());
+
+        final PublicUserReply publicUserReply = session.getPublicUserInformation(privateUserReply.getName()).join();
+
+        assertEquals(privateUserReply.getId(), publicUserReply.getId());
+        assertEquals(privateUserReply.getName(), publicUserReply.getName());
+        assertEquals(privateUserReply.getAvatarURL(), publicUserReply.getAvatarURL());
+        assertEquals(privateUserReply.getDisplayName(), publicUserReply.getDisplayName());
+    }
+
+    @Test
+    public void apiKeyTest() throws InterruptedException {
+        assumeTrue(hasAPIKey);
+
+        final String newAPIKey = session.createNewAPIKey().join();
+
+        assertNotNull(newAPIKey);
+
+        TimeUnit.SECONDS.sleep(1);
+
+        final Set<String> myAPIKeys = session.getMyAPIKeys().join();
+
+        assertNotNull(myAPIKeys);
+        assertTrue(myAPIKeys.contains(newAPIKey));
+        assertTrue(myAPIKeys.contains(System.getenv("PastefyAPIKey")));
+
+        final Boolean deleteSuccess1 = session.deleteAPIKey(newAPIKey).join();
+
+        assertNotNull(deleteSuccess1);
+        assumeTrue(deleteSuccess1);
+
+        final Boolean deleteSuccess2 = session.deleteAPIKey("invalidAPIKey99").join();
+
+        assertNotNull(deleteSuccess2);
+        assumeTrue(deleteSuccess2); // Note: The api always returns true. No matter if the api could get deleted - or not (because it doesn't exist)
+    }
+
+    @Test
+    public void notificationsTest() throws MalformedURLException {
+        assertTrue(hasAPIKey);
+
+        final List<NotificationReply> notificationReplies = session.getNotifications().join();
+
+        assertNotNull(notificationReplies);
+        assertTrue(notificationReplies.stream().noneMatch(Objects::isNull));
+
+        if (!notificationReplies.isEmpty()) {
+            NotificationReply notificationReply = notificationReplies.getFirst();
+
+            assertNotNull(notificationReply.getMessage());
+            assertNotNull(notificationReply.getUrl());
+            assertNotNull(notificationReply.getCreatedAt());
+        }
+
+        // commented out because I don't want to disturb your notifications if this isn't just a test account.
+        // session.markAllNotificationsRead().join();
+    }
+
+    @Test
+    public void plattformInfoTest() {
+        final PlatformInfoReply platformInfoReply = session.getPlatformInfo().join();
+
+        assertNotNull(platformInfoReply);
+        System.out.println("Platform info: " + platformInfoReply);
     }
 }

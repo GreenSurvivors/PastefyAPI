@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Objects;
 
 @SuppressWarnings("ClassCanBeRecord") // don't want to expose constructor
 public class TagReplyImpl implements TagReply {
@@ -66,4 +67,36 @@ public class TagReplyImpl implements TagReply {
     public int getPasteCount() {
         return pasteCount;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (TagReplyImpl) obj;
+        return Objects.equals(this.tag, that.tag) &&
+            Objects.equals(this.displayName, that.displayName) &&
+            Objects.equals(this.description, that.description) &&
+            Objects.equals(this.imageURL, that.imageURL) &&
+            Objects.equals(this.icon, that.icon) &&
+            Objects.equals(this.website, that.website) &&
+            this.pasteCount == that.pasteCount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag, displayName, description, imageURL, icon, website, pasteCount);
+    }
+
+    @Override
+    public String toString() {
+        return "TagReplyImpl[" +
+            "tag=" + tag + ", " +
+            "displayName=" + displayName + ", " +
+            "description=" + description + ", " +
+            "imageURL=" + imageURL + ", " +
+            "icon=" + icon + ", " +
+            "website=" + website + ", " +
+            "pasteCount=" + pasteCount + ']';
+    }
+
 }

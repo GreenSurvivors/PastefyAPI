@@ -52,7 +52,7 @@ public interface Session {
 
     @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes();
 
-    // not implemented.
+    // not implemented by the web api.
     //@NotNull CompletableFuture<@NotNull Boolean> addFriend(final @NotNull String pasteID, final @NotNull String friendID);
 
     @NotNull CompletableFuture<@NotNull FolderReply> createFolder (final @NotNull FolderBuilder builder);
@@ -84,7 +84,7 @@ public interface Session {
 
     @NotNull CompletableFuture<@NotNull List<@NotNull NotificationReply>> getNotifications();
 
-    @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead(); // todo get public user by name
+    @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead();
 
     @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags();
 
