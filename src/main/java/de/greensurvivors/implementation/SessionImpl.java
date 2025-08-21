@@ -57,26 +57,20 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     public SessionImpl() {
-        this("https://pastefy.app");
+        this(null);
     }
 
     @Override
-    public <T> @NotNull CompletableFuture<@Nullable PasteReply> createPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
+    public <T> @NotNull CompletableFuture<@NotNull PasteReply> createPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
         final HttpRequest request = createRequestBuilder(null, "paste").POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyWrapper.class)).
-            thenApply(it -> {
-                if (it != null && it.isSuccess()) {
-                    return it.getPaste();
-                } else {
-                    return null;
-                }
-            });
+            thenApply(PasteReplyWrapper::getPaste); // note: I'm 150% sure the wrapper doesn't return false currently, if not also accompanied by an error http status code
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable PasteReply> getPaste(final @NotNull String pasteID) {
+    public @NotNull CompletableFuture<@NotNull PasteReply> getPaste(final @NotNull String pasteID) {
         final HttpRequest request = createRequestBuilder(null, "paste", pasteID).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -84,12 +78,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable @Unmodifiable Set<@NotNull PasteReply>> getPastes() {
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes() {
         final HttpRequest request = createRequestBuilder(null, "paste").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(pasteReplies -> pasteReplies == null ? null : Set.of(pasteReplies));
+            thenApply(Set::of);
     }
 
     @Override
@@ -98,16 +92,16 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public <T> @NotNull CompletableFuture<PasteReply> editPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
+    public <T> @NotNull CompletableFuture<@NotNull PasteReply> editPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
         final HttpRequest request = createRequestBuilder(null, "paste").PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyWrapper.class)).
-            thenApply(pasteReplyWrapper -> pasteReplyWrapper.isSuccess() ? pasteReplyWrapper.getPaste() : null);
+            thenApply(PasteReplyWrapper::getPaste); // note: I'm 150% sure the wrapper doesn't return false currently, if not also accompanied by an error http status code
     }
 
     @Override
@@ -116,7 +110,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
@@ -125,61 +119,61 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull PasteReply>> getMyStarredPastes() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes() {
         final HttpRequest request = createRequestBuilder(null, "user/starred-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(pasteReplies -> pasteReplies == null ? null : Set.of(pasteReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull PasteReply>> getPublicPastes() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes() {
         final HttpRequest request = createRequestBuilder(null, "public-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(pasteReplies -> pasteReplies == null ? null : Set.of(pasteReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull PasteReply>> getTrendingPastes() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes() {
         final HttpRequest request = createRequestBuilder(null, "public-pastes/trending").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(pasteReplies -> pasteReplies == null ? null : Set.of(pasteReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull PasteReply>> getLatestPastes() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes() {
         final HttpRequest request = createRequestBuilder(null, "public-pastes/latest").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(pasteReplies -> pasteReplies == null ? null : Set.of(pasteReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable FolderReply> createFolder(final @NotNull FolderBuilder folderBuilder) {
+    public @NotNull CompletableFuture<@NotNull FolderReply> createFolder(final @NotNull FolderBuilder folderBuilder) {
         final HttpRequest request = createRequestBuilder(null, "folder").POST(HttpRequest.BodyPublishers.ofString(gson.toJson(folderBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyWrapper.class)).
-            thenApply(folderReplyWrapper -> folderReplyWrapper.isSuccess() ? folderReplyWrapper.getFolder() : null);
+            thenApply(FolderReplyWrapper::getFolder); // note: I'm 150% sure the wrapper doesn't return false currently, if not also accompanied by an error http status code
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId) {
+    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId) {
         return getFolder(folderId, false);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder) {
+    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder) {
         final HttpRequest request = createRequestBuilder(Map.of("hide_children", hideSubFolder), "folder", folderId).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -187,12 +181,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable @Unmodifiable Set<@NotNull FolderReply>> getFolders() {
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders() {
         final HttpRequest request = createRequestBuilder(null, "folder").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyImpl[].class)).
-            thenApply(folderReplies -> folderReplies == null ? null : Set.of(folderReplies));
+            thenApply(Set::of);
     }
 
     @Override
@@ -201,11 +195,11 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable PublicUserReply> getPublicUserInformation(final @NotNull String userName) {
+    public @NotNull CompletableFuture<@NotNull PublicUserReply> getPublicUserInformation(final @NotNull String userName) {
         final HttpRequest request = createRequestBuilder(null, "public/user", userName).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -221,21 +215,21 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable String> createNewAPIKey() {
+    public @NotNull CompletableFuture<@NotNull String> createNewAPIKey() {
         final HttpRequest request = createRequestBuilder(null, "user/keys").POST(HttpRequest.BodyPublishers.noBody()).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(APIKeyReplyWrapper.class)).
-            thenApply(apiKeyReplyWrapper -> apiKeyReplyWrapper == null ? null : apiKeyReplyWrapper.getKey());
+            thenApply(APIKeyReplyWrapper::getKey);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull String>> getMyAPIKeys() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull String>> getMyAPIKeys() {
         final HttpRequest request = createRequestBuilder(null, "user/keys").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(String[].class)).
-            thenApply(apiKeys -> apiKeys == null ? null : Set.of(apiKeys));
+            thenApply(Set::of);
     }
 
     @Override
@@ -244,16 +238,16 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable List<@NotNull NotificationReply>> getNotifications() {
+    public @NotNull CompletableFuture<@NotNull List<@NotNull NotificationReply>> getNotifications() {
         final HttpRequest request = createRequestBuilder(null, "user/notification").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(NotificationReplyImpl[].class)).
-            thenApply(notificationReplies -> notificationReplies == null ? null : List.of(notificationReplies));
+            thenApply(List::of);
     }
 
     @Override
@@ -262,20 +256,20 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull TagReply>> getAllTags() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags() {
         final HttpRequest request = createRequestBuilder(null,  "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(TagReplyImpl[].class)).
-            thenApply(tagReplies -> tagReplies == null ? null : Set.of(tagReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable TagReply> getTag(final @NotNull String tag) {
+    public @NotNull CompletableFuture<@NotNull TagReply> getTag(final @NotNull String tag) {
         final HttpRequest request = createRequestBuilder(null, "public/tags", tag).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -283,7 +277,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable PlatformInfoReply> getPlatformInfo() {
+    public @NotNull CompletableFuture<@NotNull PlatformInfoReply> getPlatformInfo() {
         final HttpRequest request = createRequestBuilder(null, "app/info").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -293,16 +287,16 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     // ADMIN API BELOW! DANGER! NO DUCKS ALLOWED!
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Set<@NotNull AdminUserReply>> getUsers() {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull AdminUserReply>> getUsers() {
         final HttpRequest request = createRequestBuilder(null, "admin/users").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(AdminUserReply[].class)).
-            thenApply(adminUserReplies -> adminUserReplies == null ? null : Set.of(adminUserReplies));
+            thenApply(Set::of);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable AdminUserReply> getUser(final @NotNull String userId) {
+    public @NotNull CompletableFuture<@NotNull AdminUserReply> getUser(final @NotNull String userId) {
         final HttpRequest request = createRequestBuilder(null, "admin/users", userId).GET().build();
                 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -315,16 +309,16 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     @Override
-    public @NotNull CompletableFuture<@Nullable Boolean> editUser(final @NotNull String userId, final @NotNull UserEditBuilder userEditBuilder) {
+    public @NotNull CompletableFuture<@NotNull Boolean> editUser(final @NotNull String userId, final @NotNull UserEditBuilder userEditBuilder) {
         final HttpRequest request = createRequestBuilder(null, "admin/users", userId).PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(userEditBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(SuccessReply.class)).
-            thenApply(successReply -> successReply != null && successReply.isSuccess());
+            thenApply(SuccessReply::isSuccess);
     }
 
     // ----------------------- END API -----------------------
@@ -353,22 +347,20 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
         return requestBuilder;
     }
 
-    protected <T> @NotNull Function<HttpResponse<String>, @Nullable T> deserializeBody(final @NotNull Class<T> clazz) {
+    protected <T> @NotNull Function<HttpResponse<String>, T> deserializeBody(final @NotNull Class<T> clazz) {
         return stringHttpResponse -> {
             final @Nullable String body = stringHttpResponse.body();
 
+            // note: even though not needed for some requests to convey success (or falliere) the pastify web api always has a body
+            // and always returns code 200 for success, no matter if other codes could fit better.
+            if (body == null) {
+                throw new HttpRequestFailedException(stringHttpResponse.statusCode());
+            }
+
             if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
-                if (body != null) {
                     return gson.fromJson(body, clazz);
-                } else {
-                    return null;
-                }
             } else {
-                if (body != null) {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
-                } else {
-                    throw new HttpRequestFailedException(stringHttpResponse.statusCode());
-                }
+                throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
             }
         };
     }
