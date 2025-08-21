@@ -34,7 +34,7 @@ public interface Session {
 
     <T> @NotNull CompletableFuture<@NotNull PasteReply> editPaste(final @NotNull PasteBuilder<T> builder);
 
-    /// Note: needs an api of the user who has created this paste (or is admin)
+    /// Note: needs an api key of the user who has created this paste (or is admin)
     @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);
 
     /// needs an api key.
