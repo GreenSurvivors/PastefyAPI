@@ -54,7 +54,7 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
         return isLoggedIn;
     }
 
-    public @Nullable String getFavoriteColor() {
+    public @Nullable String getFavoriteColor() { // always #f52966 for now
         return favoriteColor;
     }
 

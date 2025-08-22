@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@SuppressWarnings("unused") // api no tests reasonable
 public interface PlatformInfoReply {
     boolean arePublicPastesEnabled();
     boolean isLoginRequiredForRead();

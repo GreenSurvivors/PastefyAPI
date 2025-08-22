@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 
+@SuppressWarnings("unused") // api no further test reasonable
 public interface NotificationReply {
     int getId();
 

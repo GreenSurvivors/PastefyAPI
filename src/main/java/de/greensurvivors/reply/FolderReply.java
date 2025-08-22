@@ -18,5 +18,6 @@ public interface FolderReply extends Folder {
 
     @NotNull Instant getCreatedAt();
 
+    /// always true
     boolean exists ();
 }
