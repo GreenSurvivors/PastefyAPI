@@ -134,6 +134,15 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes() {
+        final HttpRequest request = createRequestBuilder(null, "user/sharedpastes").GET().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(deserializeBody(PasteReplyImpl[].class)).
+            thenApply(Set::of);
+    }
+
+    @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes() {
         final HttpRequest request = createRequestBuilder(null, "public-pastes").GET().build();
 

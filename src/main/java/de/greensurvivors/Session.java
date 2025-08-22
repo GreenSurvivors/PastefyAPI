@@ -46,6 +46,9 @@ public interface Session {
     /// needs an api key. obviously.
     @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes();
 
+    /// needs an api key. obviously.
+    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes();
+
     @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes();
 
     @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes();
