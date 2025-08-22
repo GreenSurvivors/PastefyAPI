@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest { // todo test tags, encryption, ai
+public class SessionTest { // todo test ai, paste fork
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
@@ -316,7 +316,7 @@ public class SessionTest { // todo test tags, encryption, ai
     }
 
     @Test
-    public void publicUserInformationTest() throws MalformedURLException {
+    public void userInformationTest() throws MalformedURLException {
         assumeTrue(hasAPIKey);
 
         final PrivateUserReply privateUserReply = session.getMyAccountInfo().join();
@@ -416,5 +416,21 @@ public class SessionTest { // todo test tags, encryption, ai
         assertNotNull(tagReplies);
         assertFalse(tagReplies.isEmpty());
         assertTrue(tagReplies.contains(tagReply));
+    }
+
+    @Test
+    public void statsTest() {
+        assumeTrue(hasAPIKey);
+
+        final StatsReply statsReply = session.getPlatformStats().join();
+
+        assertNotNull(statsReply);
+        assertTrue(statsReply.getCreatedPatesCount() > 1);
+        assertTrue(statsReply.getPastesWithOwnersCount() > 1);
+        assertTrue(statsReply.getIndexedPastesCount() > 1);
+        assertTrue(statsReply.getUserCount() > 1);
+        assertTrue(statsReply.getTagCount() > 1);
+        assertTrue(statsReply.getFolderCount() > 1);
+        assertTrue(statsReply.getS3pasteCount() > 1);
     }
 }

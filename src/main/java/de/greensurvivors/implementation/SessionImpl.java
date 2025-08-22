@@ -286,6 +286,14 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
             thenApply(deserializeBody(PlatformInfoReplyImpl.class));
     }
 
+    @Override
+    public @NotNull CompletableFuture<@NotNull StatsReply> getPlatformStats() {
+        final HttpRequest request = createRequestBuilder(null, "app/stats").GET().build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
+            thenApply(deserializeBody(StatsReplyImpl.class));
+    }
+
     // ADMIN API BELOW! DANGER! NO DUCKS ALLOWED!
 
     @Override

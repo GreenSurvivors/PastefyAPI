@@ -91,4 +91,6 @@ public interface Session {
     @NotNull CompletableFuture<@NotNull TagReply> getTag(final @NotNull String tag);
 
     @NotNull CompletableFuture<@NotNull PlatformInfoReply> getPlatformInfo();
+
+    @NotNull CompletableFuture<@NotNull StatsReply> getPlatformStats();
 }

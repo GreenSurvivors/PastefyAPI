@@ -17,7 +17,7 @@ public interface Paste<T> {
     @NotNull Collection<String> getTags();
 
     @Nullable String getFolderId();
-    @Nullable String getPasteIdForkedFrom(); // todo test
+    @Nullable String getPasteIdForkedFrom();
 
     static <T> PasteBuilder<T> newBuilder(@NotNull PasteContent<T> content) {
         return new PasteBuilderImpl<>(content);
