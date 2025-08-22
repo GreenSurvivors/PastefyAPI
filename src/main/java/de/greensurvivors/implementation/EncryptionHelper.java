@@ -44,6 +44,7 @@ public final class EncryptionHelper {
     // private constructor making this class even less extendable and doesn't allow any instances of it.
     private EncryptionHelper () {}
 
+    /// clears passkey array.
     public static @NotNull HashedPasskey hashPasskey(final byte @NotNull [] passkey) throws NoSuchAlgorithmException {
         // create salt
         final byte[] salt = new byte[16];
@@ -54,13 +55,15 @@ public final class EncryptionHelper {
             ARGON2_ITERATIONS, ARGON2_MEMORY_KB, ARGON2_PARALLELISM, ARGON2_KEY_SIZE,
             salt);
 
+        clearArray(passkey);
+
         return new HashedPasskey(hash,
             Argon2Parameters.ARGON2_id, Argon2Parameters.ARGON2_VERSION_13,
             ARGON2_ITERATIONS, ARGON2_MEMORY_KB, ARGON2_PARALLELISM, ARGON2_KEY_SIZE,
             salt);
     }
 
-    public static byte @NotNull [] hashPasskeyRaw (final byte @NotNull [] passkey,
+    private static byte @NotNull [] hashPasskeyRaw (final byte @NotNull [] passkey,
                                             final int pwAlgoType, final int pwAlgoVersion,
                                             final int pwAlgoIterations, final int pwAlgoMemory, final int pwAlgoParallelism,
                                             final int keySize,
@@ -82,8 +85,6 @@ public final class EncryptionHelper {
         // https://en.wikipedia.org/wiki/PBKDF2
         final byte[] hashKey = new byte[keySize];
         argon2.generateBytes(passkey, hashKey, 0, hashKey.length);
-
-        clearArray(passkey);
 
         return hashKey;
     }
@@ -130,10 +131,10 @@ public final class EncryptionHelper {
         encryptOutMap.put("keySize", ARGON2_KEY_SIZE);
         encryptOutMap.put("data", b64encoder.encodeToString(encryptedData));
 
-
         return gson.toJson(encryptOutMap);
     }
 
+    /// does NOT clear passkey array. Please do it yourself via EncryptionHelper.clearArray(passkey);
     public static @NotNull String decrypt (final @NotNull String encryptedData, final byte @NotNull [] passkey) throws InvalidCipherTextException {
         Map<String, Object> decodeInMap = gson.fromJson(encryptedData, TypeToken.getParameterized(LinkedHashMap.class, String.class, Object.class).getType());
 
@@ -163,7 +164,7 @@ public final class EncryptionHelper {
         return new String(decryptOutputData, StandardCharsets.UTF_8);
     }
 
-    private static void clearArray(final byte @Nullable [] array) {
+    public static void clearArray(final byte @Nullable [] array) {
         if (array != null) {
             Arrays.fill(array, (byte) 0);
         }

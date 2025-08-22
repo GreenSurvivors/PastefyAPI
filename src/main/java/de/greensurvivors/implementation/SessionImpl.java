@@ -97,12 +97,13 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public <T> @NotNull CompletableFuture<@NotNull PasteReply> editPaste(final @NotNull PasteBuilder<T> pasteBuilder) {
-        final HttpRequest request = createRequestBuilder(null, "paste").PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
+    public @NotNull <T> CompletableFuture<@NotNull Boolean> editPaste(final @NotNull String pasteID, final @NotNull PasteBuilder<T> pasteBuilder) {
+        final HttpRequest request = createRequestBuilder(null, "paste", pasteID).
+            PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(pasteBuilder))).build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
-            thenApply(deserializeBody(PasteReplyWrapper.class)).
-            thenApply(PasteReplyWrapper::getPaste); // note: I'm 150% sure the wrapper doesn't return false currently, if not also accompanied by an error http status code
+            thenApply(deserializeBody(SuccessReply.class)).
+            thenApply(SuccessReply::isSuccess); // note: I'm 150% sure the wrapper doesn't return false currently, if not also accompanied by an error http status code
     }
 
     @Override
@@ -360,7 +361,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
             }
 
             if (stringHttpResponse.statusCode() == HttpURLConnection.HTTP_OK) {
-                    return gson.fromJson(body, clazz);
+                return gson.fromJson(body, clazz);
             } else {
                 throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
             }

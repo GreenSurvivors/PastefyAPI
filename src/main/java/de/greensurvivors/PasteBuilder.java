@@ -18,6 +18,9 @@ public sealed interface PasteBuilder<T> extends Paste<T> permits PasteBuilderImp
 
     @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility);
 
+    /// Please note: Because I preferred your security over compatibility with the web api's crypto-web-lib,
+    /// This sets the isEncrypted property of the paste,
+    /// but the web can't decrypt it even if you provide the same password there.
     @NotNull PasteBuilder<T> encryptWhenSending(final byte @Nullable [] password) throws NoSuchAlgorithmException;
 
     @NotNull PasteBuilder<T> setExpirationTime(final @Nullable Instant expirationTime); // note: I have no Idea what timezone they use. Maybe german?? Maybe GMT???

@@ -2,11 +2,15 @@ package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.reply.*;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -19,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SessionTest { // todo test tags, encryption, isStarred, ai
+public class SessionTest { // todo test tags, encryption, ai
     private static final String TITLE = "test-title";
     private static final String CONTENT = "This is an api test.";
 
@@ -76,6 +80,33 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
         assertNotNull(pasteReply.getExpirationTime());
+    }
+
+    @Test
+    public void editString() throws NoSuchAlgorithmException, InvalidCipherTextException {
+        PasteReply pasteReply = session.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
+            setTitle(TITLE).
+            encryptWhenSending("v3Ry-5/\\f3_pAs5WÖrd".getBytes(StandardCharsets.UTF_8)).
+            setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).join();
+
+        assertTrue(pasteReply.getTags().isEmpty());
+
+        final Boolean success = session.editPaste(pasteReply.getId(), pasteReply.toPasteBuilder().addTag("test")).join();
+
+        assertNotNull(success);
+        assertTrue(success);
+
+        pasteReply = session.getPaste(pasteReply.getId()).join();
+
+        assertNotNull(pasteReply);
+        assertTrue(pasteReply.getTags().contains("test"));
+        assertNotEquals(TITLE, pasteReply.getTitle());
+        assertNotEquals(CONTENT, pasteReply.getContent());
+
+        pasteReply.decrypt("v3Ry-5/\\f3_pAs5WÖrd".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(TITLE, pasteReply.getTitle());
+        assertEquals(CONTENT, pasteReply.getContent());
     }
 
     @Test
@@ -366,5 +397,24 @@ public class SessionTest { // todo test tags, encryption, isStarred, ai
 
         assertNotNull(platformInfoReply);
         System.out.println("Platform info: " + platformInfoReply);
+    }
+
+    @Test
+    public void tagTest() throws MalformedURLException {
+        final TagReply tagReply = session.getTag("script").join();
+
+        assertNotNull(tagReply);
+        assertEquals("script", tagReply.getTag());
+        assertEquals("A script is a written document that contains the dialogue, stage directions, and other information needed to produce a play, film, or television program.", tagReply.getDescription());
+        assertEquals(URI.create("https://storage.interaapps.de/interaapps/pastefy-script.png").toURL(), tagReply.getImageUrl());
+        assertEquals("script", tagReply.getIcon());
+        assertNull(tagReply.getWebsite());
+        assertTrue(tagReply.getPasteCount() >= 100000);
+
+        final Set<TagReply> tagReplies = session.getAllTags().join();
+
+        assertNotNull(tagReplies);
+        assertFalse(tagReplies.isEmpty());
+        assertTrue(tagReplies.contains(tagReply));
     }
 }

@@ -45,7 +45,7 @@ publishing {
         from(components["java"])
         pom {
             name.set("PastefyAPI")
-            description.set("$description")
+            description.set(project.description)
             url.set("https://github.com/GreenSurvivors/PastefyAPI")
             licenses {
                 license {

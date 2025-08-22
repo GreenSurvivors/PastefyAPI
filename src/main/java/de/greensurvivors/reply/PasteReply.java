@@ -1,6 +1,7 @@
 package de.greensurvivors.reply;
 
 import de.greensurvivors.Paste;
+import de.greensurvivors.PasteBuilder;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,4 +24,6 @@ public interface PasteReply extends Paste<String> {
 
     // I really have no idea why the api has this field, if the api answers with status code 404 if a paste doesn't exist...
     boolean exists ();
+
+    @NotNull PasteBuilder<String> toPasteBuilder();
 }

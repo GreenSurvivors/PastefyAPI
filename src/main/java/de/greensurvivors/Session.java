@@ -30,9 +30,9 @@ public interface Session {
     @NotNull CompletableFuture<@NotNull PasteReply> getPaste(final @NotNull String pasteID);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filter_tags(list as in: =foo,bar,buzz,...), shorten_content (bool), page (int), page_limit (int), search(string), sort(string), filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid)
+    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filter_tags(list as in: =foo,bar,buzz,...), shorten_content (bool), page (int), page_limit (int), search(string), sort(string), filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid); encrypted -> bool
 
-    <T> @NotNull CompletableFuture<@NotNull PasteReply> editPaste(final @NotNull PasteBuilder<T> builder);
+    @NotNull <T> CompletableFuture<@NotNull Boolean> editPaste(final @NotNull String pasteID, final @NotNull PasteBuilder<T> builder);
 
     /// Note: needs an api key of the user who has created this paste (or is admin)
     @NotNull CompletableFuture<@NotNull Boolean> deletePaste(final @NotNull String pasteID);

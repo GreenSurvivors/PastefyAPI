@@ -26,6 +26,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     private @Nullable String title;
     private @NotNull PasteContent<T> content;
     private @NotNull PasteVisibility visibility = PasteVisibility.UNLISTED;
+    private transient boolean encryptedOverwrite = false;
     private transient @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
     @SerializedName("expire_at")
     private @Nullable Instant expirationTime = null;
@@ -71,6 +72,16 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
         } else {
             this.hashedPasskey = null;
         }
+
+        encryptedOverwrite = false;
+        return this;
+    }
+
+    /// internal method when creating a PasteBuilder from a paste reply.
+    /// We know it is encrypted, even if we don't want to encrypt it again.
+    public @NotNull PasteBuilder<T> setEncryptionOverwrite(final boolean overwrite) {
+        encryptedOverwrite = overwrite;
+
         return this;
     }
 
@@ -142,7 +153,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
 
     @Override
     public boolean isEncrypted() {
-        return hashedPasskey != null;
+        return hashedPasskey != null || encryptedOverwrite;
     }
 
     @Override
@@ -175,7 +186,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
         public JsonElement serialize(PasteBuilderImpl<?> src, Type typeOfSrc, JsonSerializationContext context) {
             final @NotNull JsonObject resultObj = new JsonObject();
 
-            if (src.isEncrypted()) {
+            if (src.isEncrypted() && !src.encryptedOverwrite) {
                 try {
                     resultObj.add("title",
                         context.serialize(src.getTitle() == null ? null : EncryptionHelper.encrypt(src.getTitle(), src.getHashedPasskey())));

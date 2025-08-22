@@ -1,7 +1,12 @@
 package de.greensurvivors.implementation.reply;
 
 import com.google.gson.annotations.SerializedName;
+import de.greensurvivors.Paste;
+import de.greensurvivors.PasteBuilder;
+import de.greensurvivors.PasteContent;
 import de.greensurvivors.implementation.EncryptionHelper;
+import de.greensurvivors.implementation.PasteBuilderImpl;
+import de.greensurvivors.implementation.content.SimpleStringContent;
 import de.greensurvivors.reply.PasteReply;
 import de.greensurvivors.reply.PublicUserReply;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -138,15 +143,32 @@ public class PasteReplyImpl implements PasteReply {
 
     @Override
     public @NotNull PasteReply decrypt(byte @NotNull [] password) throws InvalidCipherTextException {
-        if (this.getTitle() != null) {
+        if (this.getTitle() != null && !this.getTitle().isBlank()) {
             this.title = EncryptionHelper.decrypt(this.getTitle(), password);
         }
         this.content = EncryptionHelper.decrypt(this.getContent(), password);
+
+        EncryptionHelper.clearArray(password);
 
         return this;
     }
 
     public boolean exists() {
         return exists;
+    }
+
+    @Override
+    public @NotNull PasteBuilder<String> toPasteBuilder() {
+        final SimpleStringContent pasteContent = (SimpleStringContent) PasteContent.fromString(content);
+        pasteContent.setPasteType(type);
+
+        return ((PasteBuilderImpl<String>)Paste.newBuilder(pasteContent)).
+            setEncryptionOverwrite(isEncrypted).
+            setTitle(title).
+            setVisibility(visibility).
+            setExpirationTime(expirationTime).
+            setTags(tags).
+            setFolderId(folderId).
+            setPasteIdForkedFrom(pasteIdForkedFrom);
     }
 }
