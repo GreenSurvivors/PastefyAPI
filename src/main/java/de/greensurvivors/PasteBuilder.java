@@ -12,9 +12,9 @@ import java.util.Collection;
 public sealed interface PasteBuilder<T> extends Paste<T> permits PasteBuilderImpl {
     @NotNull PasteBuilder<T> setTitle(final @Nullable String title);
 
-    @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<T> content);
+    @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<@NotNull T> content);
 
-    @NotNull PasteContent<T> getPackagedContent();
+    @NotNull PasteContent<@NotNull T> getPackagedContent();
 
     @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility);
 

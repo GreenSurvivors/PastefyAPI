@@ -6,7 +6,7 @@ import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteContent;
 import de.greensurvivors.implementation.EncryptionHelper;
 import de.greensurvivors.implementation.PasteBuilderImpl;
-import de.greensurvivors.implementation.content.SimpleStringContent;
+import de.greensurvivors.implementation.content.SimpleStringContentImpl;
 import de.greensurvivors.reply.PasteReply;
 import de.greensurvivors.reply.PublicUserReply;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -159,7 +159,7 @@ public class PasteReplyImpl implements PasteReply {
 
     @Override
     public @NotNull PasteBuilder<String> toPasteBuilder() {
-        final SimpleStringContent pasteContent = (SimpleStringContent) PasteContent.fromString(content);
+        final SimpleStringContentImpl pasteContent = (SimpleStringContentImpl) PasteContent.fromString(content);
         pasteContent.setPasteType(type);
 
         return ((PasteBuilderImpl<String>)Paste.newBuilder(pasteContent)).

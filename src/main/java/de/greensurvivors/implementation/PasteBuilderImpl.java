@@ -24,7 +24,7 @@ import java.util.List;
 // sorry for the final, but I can't take encryption lightly.
 public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     private @Nullable String title;
-    private @NotNull PasteContent<T> content;
+    private @NotNull PasteContent<@NotNull T> content;
     private @NotNull PasteVisibility visibility = PasteVisibility.UNLISTED;
     private transient boolean encryptedOverwrite = false;
     private transient @Nullable EncryptionHelper.HashedPasskey hashedPasskey = null;
@@ -38,7 +38,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     @SerializedName("ai")
     private boolean useAI = false;
 
-    public PasteBuilderImpl (final @NotNull PasteContent<T> content) {
+    public PasteBuilderImpl (final @NotNull PasteContent<@NotNull T> content) {
         this.content = content;
     }
 
@@ -49,13 +49,13 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     }
 
     @Override
-    public @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<T> content) {
+    public @NotNull PasteBuilder<T> setContent(final @NotNull PasteContent<@NotNull T> content) {
         this.content = content;
         return this;
     }
 
     @Override
-    public @NotNull PasteContent<T> getPackagedContent() {
+    public @NotNull PasteContent<@NotNull T> getPackagedContent() {
         return content;
     }
 

@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public final class SimpleStringContent implements PasteContent<@NotNull String> {
+public final class SimpleStringContentImpl implements PasteContent.SimpleStringContent {
     private final @NotNull String getContent;
     private @NotNull Paste.PasteType type = Paste.PasteType.PASTE;
 
-    public SimpleStringContent(@NotNull String getContent) {
+    public SimpleStringContentImpl(@NotNull String getContent) {
         this.getContent = getContent;
     }
 
@@ -41,7 +41,7 @@ public final class SimpleStringContent implements PasteContent<@NotNull String> 
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SimpleStringContent) obj;
+        var that = (SimpleStringContentImpl) obj;
         return Objects.equals(this.getContent, that.getContent);
     }
 
