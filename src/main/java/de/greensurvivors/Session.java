@@ -16,10 +16,14 @@ public interface Session {
         return new SessionImpl();
     }
 
+    /// Note: there isn't much to keep your api safe, beyond just using SSL (https).
+    /// Please change your API on a regular basis!
     static Session newSession(final @Nullable String apiKey) {
         return new SessionImpl(apiKey);
     }
 
+    /// Note: there isn't much to keep your api safe, beyond just using SSL (https).
+    /// Please change your API on a regular basis!
     static Session newSession (final @NotNull String serverAddress, final @Nullable String apiKey) {
         return new SessionImpl(serverAddress, apiKey);
     }
@@ -30,7 +34,7 @@ public interface Session {
     @NotNull CompletableFuture<@NotNull PasteReply> getPaste(final @NotNull String pasteID);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filter_tags(list as in: =foo,bar,buzz,...), shorten_content (bool), page (int), page_limit (int), search(string), sort(string), filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid); encrypted -> bool
+    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid); encrypted -> bool
 
     @NotNull <T> CompletableFuture<@NotNull Boolean> editPaste(final @NotNull String pasteID, final @NotNull PasteBuilder<T> builder);
 
@@ -64,7 +68,7 @@ public interface Session {
     @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId);
 
     /// needs an api key.
-    @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder);
+    @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final @NotNull Set<? extends @NotNull QueryParameter<?>> queryParameters);
 
     // todo can I overwrite the user via formdata filter?
     /// needs an api key, if webservice is configured so - and pastify.app is.

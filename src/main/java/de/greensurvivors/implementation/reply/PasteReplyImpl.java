@@ -142,7 +142,7 @@ public class PasteReplyImpl implements PasteReply {
     }
 
     @Override
-    public @NotNull PasteReply decrypt(byte @NotNull [] password) throws InvalidCipherTextException {
+    public @NotNull PasteReply decrypt(final byte @NotNull [] password) throws InvalidCipherTextException {
         if (this.getTitle() != null && !this.getTitle().isBlank()) {
             this.title = EncryptionHelper.decrypt(this.getTitle(), password);
         }
@@ -170,5 +170,25 @@ public class PasteReplyImpl implements PasteReply {
             setTags(tags).
             setFolderId(folderId).
             setPasteIdForkedFrom(pasteIdForkedFrom);
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "PasteReplyImpl[" +
+            "title=" + title + ", " +
+            "content=" + content + ", " +
+            "visibility=" + visibility + ", " +
+            "isEncrypted=" + isEncrypted + ", " +
+            "expirationTime=" + expirationTime + ", " +
+            "tags=" + tags + ", " +
+            "folderId=" + folderId + ", " +
+            "pasteIdForkedFrom=" + pasteIdForkedFrom +", " +
+            "id=" + id + ", " +
+            "exists=" + exists +", " +
+            "rawURL=" + rawURL + ", " +
+            "createdAt=" + createdAt +", " +
+            "user=" + user + ", " +
+            "folderId=" + folderId +", " +
+            "isStarred=" + isStarred + ']';
     }
 }

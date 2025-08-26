@@ -10,6 +10,7 @@ import de.greensurvivors.admin.AdminSession;
 import de.greensurvivors.admin.AdminUserReply;
 import de.greensurvivors.admin.UserEditBuilder;
 import de.greensurvivors.exception.HttpRequestFailedException;
+import de.greensurvivors.implementation.queryparam.AQueryParameter;
 import de.greensurvivors.implementation.reply.*;
 import de.greensurvivors.implementation.reply.replywrapper.*;
 import de.greensurvivors.reply.*;
@@ -28,10 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -180,12 +178,13 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId) {
-        return getFolder(folderId, false);
+        return getFolder(folderId, Collections.emptySet());
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final boolean hideSubFolder) {
-        final HttpRequest request = createRequestBuilder(Map.of("hide_children", hideSubFolder), "folder", folderId).GET().build();
+    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        @SuppressWarnings("unchecked") // since the QueryParameter interface is sealed and only permits AQueryParameter, every Set of QueryParameter is a Set of AQueryParameter.
+        final HttpRequest request = createRequestBuilder((Set<AQueryParameter<? extends @NotNull Object>>) queryParameters, "folder", folderId).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyImpl.class));
@@ -343,7 +342,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     // ----------------------- END API -----------------------
 
-    protected @NotNull HttpRequest.Builder createRequestBuilder(final @Nullable Map<@NotNull String, ? extends @NotNull Object> queryParameters, final @NotNull String... path) {
+    protected @NotNull HttpRequest.Builder createRequestBuilder(final @Nullable Set<@NotNull AQueryParameter<? extends @NotNull Object>> queryParameters, final @NotNull String... path) {
         final @NotNull String url = baseURL + String.join("/", path);
 
         final @NotNull HttpRequest.Builder requestBuilder;
@@ -351,8 +350,8 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
             requestBuilder = HttpRequest.newBuilder(URI.create(url));
         } else {
             final StringJoiner queryJoiner = new StringJoiner("&");
-            for (Map.Entry<@NotNull String, ?> entry : queryParameters.entrySet()) {
-                queryJoiner.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8));
+            for (AQueryParameter<? extends @NotNull Object> parameter : queryParameters) {
+                queryJoiner.add(URLEncoder.encode(parameter.getName(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(parameter.getFormData(), StandardCharsets.UTF_8));
             }
 
             requestBuilder = HttpRequest.newBuilder(URI.create(url + "?" + queryJoiner));

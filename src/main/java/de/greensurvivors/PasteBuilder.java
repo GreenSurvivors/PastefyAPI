@@ -1,9 +1,11 @@
 package de.greensurvivors;
 
 import de.greensurvivors.implementation.PasteBuilderImpl;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Collection;
@@ -17,6 +19,12 @@ public sealed interface PasteBuilder<T> extends Paste<T> permits PasteBuilderImp
     @NotNull PasteContent<@NotNull T> getPackagedContent();
 
     @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility);
+
+    /// Please note: Because I preferred your security over compatibility with the web api's crypto-web-lib,
+    /// This sets the isEncrypted property of the paste,
+    /// but the web can't decrypt it even if you provide the same password there.
+    /// Also note that encrypting the content now returns a COPIED PasteBuilder with the Content now encrypted as a String!
+    @NotNull PasteBuilder<String> encryptNow(final byte @NotNull [] password) throws NoSuchAlgorithmException, IOException, InvalidCipherTextException;
 
     /// Please note: Because I preferred your security over compatibility with the web api's crypto-web-lib,
     /// This sets the isEncrypted property of the paste,

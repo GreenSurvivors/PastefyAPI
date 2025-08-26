@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EncryptionHelperTest {
-    private static final String PASSWORD = "S4f³ pÄ?5w°r|)";
+    private static final String PASSWORD = "S4f³ pÄ?5w°r|)"; // note: NEVER use Strings for real passwords, if you can avoid it in any matter!
     private static final String CONTENT = "encrypted";
 
     @Test

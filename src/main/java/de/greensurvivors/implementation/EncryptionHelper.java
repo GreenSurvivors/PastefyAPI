@@ -90,6 +90,15 @@ public final class EncryptionHelper {
     }
 
     public static @NotNull String encrypt (final @NotNull String content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
+        // get bytes as fast as possible bytes
+        final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+        final String encrypted = encrypt(bytes, hashedPasskey);
+        clearArray(bytes);
+
+        return encrypted;
+    }
+
+    public static @NotNull String encrypt (final byte @NotNull [] content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
         final KeyParameter encodeKeyParameter = new KeyParameter(hashedPasskey.hash());
 
         // generate a random nonce
@@ -106,13 +115,10 @@ public final class EncryptionHelper {
         final AEADCipher cipher = new GCMSIVBlockCipher();
         cipher.init(true, new AEADParameters(encodeKeyParameter, AES_TAG_LENGTH * 8, nonce));
 
-        // decode back to bytes
-        final byte[] encryptInputData = content.getBytes(StandardCharsets.UTF_8);
-
         // prepare output
-        final int encryptOutputSize = cipher.getOutputSize(encryptInputData.length);
+        final int encryptOutputSize = cipher.getOutputSize(content.length);
         final byte[] encryptedData = new byte[encryptOutputSize];
-        final int alreadyEncryptedBytes = cipher.processBytes(encryptInputData, 0, encryptInputData.length, encryptedData, 0); // should result in 0
+        final int alreadyEncryptedBytes = cipher.processBytes(content, 0, content.length, encryptedData, 0); // should result in 0
 
         // start encrypting
         cipher.doFinal(encryptedData, alreadyEncryptedBytes);

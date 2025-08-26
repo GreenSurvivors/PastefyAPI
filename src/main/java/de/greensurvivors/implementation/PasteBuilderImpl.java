@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
+import de.greensurvivors.Paste;
 import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteContent;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -63,6 +64,20 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     public @NotNull PasteBuilder<T> setVisibility(final @NotNull PasteVisibility visibility) {
         this.visibility = visibility;
         return this;
+    }
+
+    @Override
+    public @NotNull PasteBuilder<String> encryptNow(final byte @NotNull [] password) throws NoSuchAlgorithmException, IOException, InvalidCipherTextException {
+        this.hashedPasskey = EncryptionHelper.hashPasskey(password);
+
+        return new PasteBuilderImpl<>(PasteContent.fromString(EncryptionHelper.encrypt(getPackagedContent().serialize(), getHashedPasskey())))
+            .setTitle(this.title == null ? null : EncryptionHelper.encrypt(this.title, getHashedPasskey()))
+            .setVisibility(this.getVisibility())
+            .setExpirationTime(this.getExpirationTime())
+            .setTags(this.getTags())
+            .setFolderId(this.getFolderId())
+            .setPasteIdForkedFrom(this.getPasteIdForkedFrom())
+            .useAI(this.doesUseAI());
     }
 
     @Override

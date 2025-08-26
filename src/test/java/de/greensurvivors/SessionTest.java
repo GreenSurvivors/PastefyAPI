@@ -475,4 +475,12 @@ public class SessionTest { // todo test ai, paste fork
         assertTrue(statsReply.getFolderCount() > 1);
         assertTrue(statsReply.getS3pasteCount() > 1);
     }
+
+    @Test
+    public void publicPastesTest () {
+        final Set<PasteReply> publicPastes = session.getPublicPastes().join();
+
+        assertNotNull(publicPastes);
+        assertFalse(publicPastes.isEmpty());
+    }
 }
