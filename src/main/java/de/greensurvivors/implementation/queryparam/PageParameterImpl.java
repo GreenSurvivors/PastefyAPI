@@ -1,10 +1,11 @@
 package de.greensurvivors.implementation.queryparam;
 
+import de.greensurvivors.queryparam.PageParameter;
 import org.jetbrains.annotations.NotNull;
 
-public class PageLimitParameter extends AQueryParameter<@NotNull Integer> {
-    protected PageLimitParameter(final int value) {
-        super("page_limit", value);
+public non-sealed class PageParameterImpl extends AQueryParameter<@NotNull Integer> implements PageParameter {
+    public PageParameterImpl(final int value) {
+        super("page", value);
     }
 
     @Override

@@ -13,6 +13,7 @@ import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.implementation.queryparam.AQueryParameter;
 import de.greensurvivors.implementation.reply.*;
 import de.greensurvivors.implementation.reply.replywrapper.*;
+import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

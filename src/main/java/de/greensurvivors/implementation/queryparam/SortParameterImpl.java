@@ -1,12 +1,13 @@
 package de.greensurvivors.implementation.queryparam;
 
+import de.greensurvivors.queryparam.SortParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Map;
 
-public class SortParameter extends AQueryParameter<@NotNull Map<SortParameter.SortType, @NotNull Boolean>> {
-    protected SortParameter(final @NotNull Map<@NotNull SortType, Boolean> value) {
+public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean>> implements SortParameter {
+    public SortParameterImpl(final @NotNull Map<@NotNull SortType, Boolean> value) {
         super("sort", value);
     }
 
@@ -23,30 +24,8 @@ public class SortParameter extends AQueryParameter<@NotNull Map<SortParameter.So
         }
 
         return String.join(",", super.getValue().entrySet().stream().map(sortTypeEntry ->
-                !sortTypeEntry.getValue() ? sortTypeEntry.getKey().internalName + "+" : sortTypeEntry.getKey().internalName
+                !sortTypeEntry.getValue() ? sortTypeEntry.getKey().getInternalName() + "+" : sortTypeEntry.getKey().getInternalName()
             ).toArray(String[]::new));
-    }
-
-    public abstract static class SortType {// todo move to api
-        private final @NotNull String internalName;
-
-        protected SortType(final @NotNull String internalName) {
-            this.internalName = internalName;
-        }
-
-        public static SortType TIME_CREATED = new SortType ("createdAt") {}; // paste, folder, authkey, user
-        public static SortType TIME_EXPIRES = new SortType ("expireAt") {}; // paste
-        public static SortType POPULARITY = new SortType("engagementScore") {}; // paste
-        public static SortType TITLE = new SortType("title") {}; // paste
-        public static SortType DISPLAY_NAME = new SortType("uniqueName") {}; // user
-        public static SortType ID_USER = new SortType("userId") {}; // paste, folder, authkey
-        public static SortType ID_FORKED_FROM = new SortType("forkedFrom") {}; // paste
-        public static SortType ENCRYPTED = new SortType("encrypted") {}; // paste
-        public static SortType PASTE_TYPE = new SortType("type") {}; // paste // todo
-        public static SortType VISIBILITY = new SortType("visibility") {}; // paste // todo
-        public static SortType FOLDER = new SortType("folder") {}; // paste
-        public static SortType PARENT_FOLDER = new SortType("parent") {}; // folder
-        public static SortType TIME_UPDATED = new SortType("updatedAt") {}; // folder, authkey, user
     }
 
     // Note: sort just sorts by internal used column.

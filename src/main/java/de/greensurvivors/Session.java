@@ -1,6 +1,7 @@
 package de.greensurvivors;
 
 import de.greensurvivors.implementation.SessionImpl;
+import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

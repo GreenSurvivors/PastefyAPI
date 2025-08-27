@@ -1,8 +1,10 @@
 package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
+import de.greensurvivors.implementation.queryparam.filter.AFilterImpl;
 import de.greensurvivors.reply.*;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -484,5 +486,18 @@ public class SessionTest { // todo test ai, paste fork
 
         assertNotNull(publicPastes);
         assertFalse(publicPastes.isEmpty());
+
+        final Optional<PasteReply> pasteWithUser = publicPastes.stream().filter(reply -> reply.getUser() != null).findAny();
+
+        if (pasteWithUser.isPresent()) {
+            final Set<PasteReply> publicFilteredPastes = session.getPublicPastes(Set.of(new AFilterImpl.UserIdFilterImpl(List.of("filter"), pasteWithUser.get().getUser().getId()))).join();
+
+            assertNotNull(publicFilteredPastes);
+            assertTrue(publicFilteredPastes.stream().allMatch(it -> it.getId().equals(pasteWithUser.get().getId())));
+
+            if (publicPastes.size() <= publicFilteredPastes.size()) {
+                System.out.println("Something may be wrong with filtering public pastes. Size before filtering: " + publicPastes.size() + ", size after: " + publicFilteredPastes.size());
+            }
+        }
     }
 }

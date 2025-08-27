@@ -1,14 +1,15 @@
 package de.greensurvivors.implementation.queryparam;
 
+import de.greensurvivors.queryparam.FilterTagsParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class FilterTagsParameter extends AQueryParameter<@NotNull Set<@NotNull String>> {
+public non-sealed class FilterTagsParameterImpl extends AQueryParameter<@NotNull Set<@NotNull String>> implements FilterTagsParameter {
 
-    protected FilterTagsParameter(final @NotNull Set<@NotNull String> value) {
+    public FilterTagsParameterImpl(final @NotNull Set<@NotNull String> value) {
         super("filter_tags", new HashSet<>(value));
     }
 

@@ -3,15 +3,16 @@ package de.greensurvivors.implementation.queryparam.filter;
 import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
 import de.greensurvivors.implementation.queryparam.AQueryParameter;
+import de.greensurvivors.queryparam.FilterParameter;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public abstract class AFilterType<T extends @NotNull Object> extends AQueryParameter<T> implements IFilterLike { // todo this shouldn't implement IFilterLike
+public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends AQueryParameter<T> implements FilterParameter<T> {
 
-    protected AFilterType(final @NotNull List<@NotNull String> path, final @NotNull String internalName, T value) {
+    protected AFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String internalName, T value) {
         super(joinPath(path, internalName), value);
     }
 
@@ -32,8 +33,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class PasteVisibilityFilterType extends AFilterType<Paste.@NotNull PasteVisibility> {
-        public PasteVisibilityFilterType(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteVisibility visibility) {
+    public static class PasteVisibilityFilterImpl extends AFilterImpl<Paste.@NotNull PasteVisibility> {
+        public PasteVisibilityFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteVisibility visibility) {
             super(path, "visibility", visibility);
         }
 
@@ -44,8 +45,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class IsEncryptedFilterType extends AFilterType<@NotNull Boolean> {
-        public IsEncryptedFilterType(final @NotNull List<@NotNull String> path, final boolean isEncrypted) {
+    public static class IsEncryptedFilterImpl extends AFilterImpl<@NotNull Boolean> {
+        public IsEncryptedFilterImpl(final @NotNull List<@NotNull String> path, final boolean isEncrypted) {
             super(path, "encrypted", isEncrypted);
         }
 
@@ -56,8 +57,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class FolderFilterType extends AFilterType<@NotNull String> {
-        public FolderFilterType(final @NotNull List<@NotNull String> path, final @NotNull String folderId) {
+    public static class FolderFilterImpl extends AFilterImpl<@NotNull String> {
+        public FolderFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String folderId) {
             super(path, "folder", folderId);
         }
 
@@ -68,8 +69,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste, folder
-    public static class UserIdFilterType extends AFilterType<@NotNull String> {
-        public UserIdFilterType(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
+    public static class UserIdFilterImpl extends AFilterImpl<@NotNull String> {
+        public UserIdFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
             super(path, "userId", userId);
         }
 
@@ -80,8 +81,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class PasteForkedFromFilterType extends AFilterType<@NotNull String> {
-        public PasteForkedFromFilterType(final @NotNull List<@NotNull String> path, final @NotNull String pasteId) {
+    public static class PasteForkedFromFilterImpl extends AFilterImpl<@NotNull String> {
+        public PasteForkedFromFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String pasteId) {
             super(path, "forkedFrom", pasteId);
         }
 
@@ -92,8 +93,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class PasteTypeFilterType extends AFilterType<Paste.@NotNull PasteType> {
-        public PasteTypeFilterType(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteType pasteType) {
+    public static class PasteTypeFilterImpl extends AFilterImpl<Paste.@NotNull PasteType> {
+        public PasteTypeFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteType pasteType) {
             super(path, "type", pasteType);
         }
 
@@ -104,8 +105,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // paste
-    public static class StarredByFilterType extends AFilterType<@NotNull String> {
-        public StarredByFilterType(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
+    public static class StarredByFilterImpl extends AFilterImpl<@NotNull String> {
+        public StarredByFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
             super(path, "starredBy", userId);
         }
 
@@ -116,8 +117,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // folder
-    public static class FolderParentFilterType extends AFilterType<@NotNull String> {
-        public FolderParentFilterType(final @NotNull List<@NotNull String> path, final @NotNull String parentId) {
+    public static class FolderParentFilterImpl extends AFilterImpl<@NotNull String> {
+        public FolderParentFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String parentId) {
             super(path, "parent", parentId);
         }
 
@@ -128,8 +129,8 @@ public abstract class AFilterType<T extends @NotNull Object> extends AQueryParam
     }
 
     // user
-    public static class AccountStatusFilterType extends AFilterType<@NotNull AccountStaus> {
-        public AccountStatusFilterType(final @NotNull List<@NotNull String> path, final @NotNull AccountStaus accountStaus) {
+    public static class AccountStatusFilterImpl extends AFilterImpl<@NotNull AccountStaus> {
+        public AccountStatusFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull AccountStaus accountStaus) {
             super(path, "type", accountStaus);
         }
 
