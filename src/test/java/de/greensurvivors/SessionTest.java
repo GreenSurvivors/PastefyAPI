@@ -15,10 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +34,11 @@ public class SessionTest { // todo test ai, paste fork
         final String apiKey = System.getenv("PastefyAPIKey");
         session = Session.newSession(apiKey);
         hasAPIKey = apiKey != null;
+    }
+
+    @AfterAll
+    public static void close() throws Exception {
+        session.close();
     }
 
     @Test
@@ -140,9 +142,9 @@ public class SessionTest { // todo test ai, paste fork
     }
 
     @Test
-    public void deleteStringNoAPIKey() {
-        try {
-            Boolean success = Session.newSession().createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
+    public void deleteStringNoAPIKey() throws Exception {
+        try (final Session sessionNoKey = Session.newSession()){
+            Boolean success = sessionNoKey.createPaste(Paste.newBuilder(PasteContent.fromString(CONTENT)).
                     setTitle(TITLE).
                     setExpirationTime(Instant.now().plus(24, ChronoUnit.HOURS))).
                 thenCompose(pasteReply -> session.deletePaste(pasteReply.getId())).join();
@@ -344,9 +346,9 @@ public class SessionTest { // todo test ai, paste fork
     }
 
     @Test
-    public void createFolderWithoutAPIKey() {
-        try {
-            Session.newSession().createFolder(Folder.newBuilder("public-test")).join();
+    public void createFolderWithoutAPIKey() throws Exception {
+        try (final Session sessionNoKey = Session.newSession()){
+            sessionNoKey.createFolder(Folder.newBuilder("public-test")).join();
         } catch (CompletionException e) {
             if (e.getCause() instanceof HttpRequestFailedException httpRequestFailedException) {
                 assertEquals(401, httpRequestFailedException.getStatusCode());

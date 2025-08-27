@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class SessionImpl implements AdminSession { // todo throw exception for methods that needs a api key and our is null
-    private final @Nullable String apiKey;
+    private final @Nullable String apiKey; // personal note: using OAuth2 would be better here!
     private final @NotNull HttpClient httpClient;
     private final @NotNull String baseURL;
     private final @NotNull Gson gson;
@@ -78,7 +78,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes() {
-        final HttpRequest request = createRequestBuilder(null, "paste").GET().build();
+        return getPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @Nullable Set<QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "paste").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -124,7 +129,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes() {
-        final HttpRequest request = createRequestBuilder(null, "user/starred-pastes").GET().build();
+        return getMyStarredPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "user/starred-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -133,7 +143,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes() {
-        final HttpRequest request = createRequestBuilder(null, "user/sharedpastes").GET().build();
+        return getMySharedPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "user/sharedpastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -142,7 +157,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes() {
-        final HttpRequest request = createRequestBuilder(null, "public-pastes").GET().build();
+        return getPublicPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes(@Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> parameters) {
+        final HttpRequest request = createRequestBuilder(parameters, "public-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -151,7 +171,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes() {
-        final HttpRequest request = createRequestBuilder(null, "public-pastes/trending").GET().build();
+        return getTrendingPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/trending").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -160,7 +185,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes() {
-        final HttpRequest request = createRequestBuilder(null, "public-pastes/latest").GET().build();
+        return getLatestPastes(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/latest").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
@@ -178,13 +208,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId) {
-        return getFolder(folderId, Collections.emptySet());
+        return getFolder(folderId, null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
-        @SuppressWarnings("unchecked") // since the QueryParameter interface is sealed and only permits AQueryParameter, every Set of QueryParameter is a Set of AQueryParameter.
-        final HttpRequest request = createRequestBuilder((Set<AQueryParameter<? extends @NotNull Object>>) queryParameters, "folder", folderId).GET().build();
+    public @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "folder", folderId).GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyImpl.class));
@@ -192,7 +221,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders() {
-        final HttpRequest request = createRequestBuilder(null, "folder").GET().build();
+        return getFolders(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "folder").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyImpl[].class)).
@@ -271,7 +305,12 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags() {
-        final HttpRequest request = createRequestBuilder(null,  "public/tags").GET().build();
+        return getAllTags(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters,  "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(TagReplyImpl[].class)).
@@ -342,7 +381,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     // ----------------------- END API -----------------------
 
-    protected @NotNull HttpRequest.Builder createRequestBuilder(final @Nullable Set<@NotNull AQueryParameter<? extends @NotNull Object>> queryParameters, final @NotNull String... path) {
+    protected @NotNull HttpRequest.Builder createRequestBuilder(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters, final @NotNull String... path) {
         final @NotNull String url = baseURL + String.join("/", path);
 
         final @NotNull HttpRequest.Builder requestBuilder;
@@ -350,8 +389,9 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
             requestBuilder = HttpRequest.newBuilder(URI.create(url));
         } else {
             final StringJoiner queryJoiner = new StringJoiner("&");
-            for (AQueryParameter<? extends @NotNull Object> parameter : queryParameters) {
-                queryJoiner.add(URLEncoder.encode(parameter.getName(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(parameter.getFormData(), StandardCharsets.UTF_8));
+            for (QueryParameter<? extends @NotNull Object> parameter : queryParameters) {
+                // since the QueryParameter interface is sealed and only permits AQueryParameter, every Set of QueryParameter is a Set of AQueryParameter.
+                queryJoiner.add(URLEncoder.encode(((AQueryParameter<? extends @NotNull Object>) parameter).getName(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(((AQueryParameter<? extends @NotNull Object>) parameter).getFormData(), StandardCharsets.UTF_8));
             }
 
             requestBuilder = HttpRequest.newBuilder(URI.create(url + "?" + queryJoiner));
@@ -382,6 +422,11 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
                 throw new HttpRequestFailedException(stringHttpResponse.statusCode(), gson.fromJson(body, ErrorReply.class).getExceptionName());
             }
         };
+    }
+
+    @Override
+    public void close() {
+        httpClient.close();
     }
 
     protected static class InstantAdapter extends TypeAdapter<Instant> {
