@@ -5,18 +5,33 @@ import de.greensurvivors.Paste;
 import de.greensurvivors.implementation.queryparam.AQueryParameter;
 import de.greensurvivors.queryparam.FilterParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends AQueryParameter<T> implements FilterParameter<T> {
+public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFilterLike {
+    protected final @NotNull String internalName;
+    private final @NotNull T value;
 
-    protected AFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String internalName, T value) {
-        super(joinPath(path, internalName), value);
+    protected AProtoFilterImpl(final @NotNull String internalName, T value) {
+        this.internalName = internalName;
+        this.value = value;
     }
 
-    protected static String joinPath ( final @NotNull List<@NotNull String> path, final @NotNull String name) {
+    public @NotNull T getValue() {
+        return value;
+    }
+
+    public abstract @NotNull String getFormData();
+
+    public @NotNull FilterImpl build (final @NotNull List<@NotNull String> path) {
+        return new FilterImpl(joinPath(path, internalName), value);
+    }
+
+    @VisibleForTesting
+    public static @NotNull String joinPath (final @NotNull List<@NotNull String> path, final @NotNull String name) {
         StringBuilder builder = new StringBuilder(URLEncoder.encode(name, StandardCharsets.UTF_8));
 
         if (!path.isEmpty()) {
@@ -32,10 +47,22 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
         return builder.toString();
     }
 
+
+    public non-sealed class FilterImpl extends AQueryParameter<T> implements FilterParameter<T>, IFilterLike {
+        protected FilterImpl(final @NotNull String internalName, @NotNull T value) {
+            super(internalName, value);
+        }
+
+        @Override
+        public @NotNull String getFormData() {
+            return AProtoFilterImpl.this.getFormData();
+        }
+    }
+
     // paste
-    public static class PasteVisibilityFilterImpl extends AFilterImpl<Paste.@NotNull PasteVisibility> {
-        public PasteVisibilityFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteVisibility visibility) {
-            super(path, "visibility", visibility);
+    public static class PasteVisibilityProtoFilterImpl extends AProtoFilterImpl<Paste.@NotNull PasteVisibility> {
+        public PasteVisibilityProtoFilterImpl(final @NotNull Paste.PasteVisibility visibility) {
+            super("visibility", visibility);
         }
 
         @Override
@@ -45,9 +72,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste
-    public static class IsEncryptedFilterImpl extends AFilterImpl<@NotNull Boolean> {
-        public IsEncryptedFilterImpl(final @NotNull List<@NotNull String> path, final boolean isEncrypted) {
-            super(path, "encrypted", isEncrypted);
+    public static class IsEncryptedProtoFilterImpl extends AProtoFilterImpl<@NotNull Boolean> {
+        public IsEncryptedProtoFilterImpl(final boolean isEncrypted) {
+            super("encrypted", isEncrypted);
         }
 
         @Override
@@ -57,9 +84,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste
-    public static class FolderFilterImpl extends AFilterImpl<@NotNull String> {
-        public FolderFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String folderId) {
-            super(path, "folder", folderId);
+    public static class FolderProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+        public FolderProtoFilterImpl(final @NotNull String folderId) {
+            super("folder", folderId);
         }
 
         @Override
@@ -69,9 +96,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste, folder
-    public static class UserIdFilterImpl extends AFilterImpl<@NotNull String> {
-        public UserIdFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
-            super(path, "userId", userId);
+    public static class UserIdProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+        public UserIdProtoFilterImpl(final @NotNull String userId) {
+            super("userId", userId);
         }
 
         @Override
@@ -81,9 +108,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste
-    public static class PasteForkedFromFilterImpl extends AFilterImpl<@NotNull String> {
-        public PasteForkedFromFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String pasteId) {
-            super(path, "forkedFrom", pasteId);
+    public static class PasteForkedFromProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+        public PasteForkedFromProtoFilterImpl(final @NotNull String pasteId) {
+            super("forkedFrom", pasteId);
         }
 
         @Override
@@ -93,9 +120,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste
-    public static class PasteTypeFilterImpl extends AFilterImpl<Paste.@NotNull PasteType> {
-        public PasteTypeFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull Paste.PasteType pasteType) {
-            super(path, "type", pasteType);
+    public static class PasteTypeProtoFilterImpl extends AProtoFilterImpl<Paste.@NotNull PasteType> {
+        public PasteTypeProtoFilterImpl(final @NotNull Paste.PasteType pasteType) {
+            super("type", pasteType);
         }
 
         @Override
@@ -105,9 +132,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // paste
-    public static class StarredByFilterImpl extends AFilterImpl<@NotNull String> {
-        public StarredByFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String userId) {
-            super(path, "starredBy", userId);
+    public static class StarredByProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+        public StarredByProtoFilterImpl(final @NotNull String userId) {
+            super("starredBy", userId);
         }
 
         @Override
@@ -117,9 +144,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // folder
-    public static class FolderParentFilterImpl extends AFilterImpl<@NotNull String> {
-        public FolderParentFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull String parentId) {
-            super(path, "parent", parentId);
+    public static class FolderParentProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+        public FolderParentProtoFilterImpl(final @NotNull String parentId) {
+            super("parent", parentId);
         }
 
         @Override
@@ -129,9 +156,9 @@ public abstract non-sealed class AFilterImpl<T extends @NotNull Object> extends 
     }
 
     // user
-    public static class AccountStatusFilterImpl extends AFilterImpl<@NotNull AccountStaus> {
-        public AccountStatusFilterImpl(final @NotNull List<@NotNull String> path, final @NotNull AccountStaus accountStaus) {
-            super(path, "type", accountStaus);
+    public static class AccountStatusProtoFilterImpl extends AProtoFilterImpl<@NotNull AccountStaus> {
+        public AccountStatusProtoFilterImpl(final @NotNull AccountStaus accountStaus) {
+            super("type", accountStaus);
         }
 
         @Override

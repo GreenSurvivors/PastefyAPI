@@ -1,7 +1,6 @@
 package de.greensurvivors.queryparam;
 
 import de.greensurvivors.implementation.queryparam.*;
-import de.greensurvivors.implementation.queryparam.filter.FilterBuilderImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -11,7 +10,7 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AQuery
     T getValue();
 
     static @NotNull FilterBuilder newFilterBuilder() {
-        return new FilterBuilderImpl();
+        return FilterBuilder.newFilterBuilder();
     }
 
     static @NotNull FilterTagsParameter newFilterTagsParameter(final @NotNull Set<@NotNull String> value) {

@@ -1,7 +1,7 @@
 package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
-import de.greensurvivors.implementation.queryparam.filter.AFilterImpl;
+import de.greensurvivors.queryparam.FilterBuilder;
 import de.greensurvivors.reply.*;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.junit.jupiter.api.AfterAll;
@@ -490,10 +490,13 @@ public class SessionTest { // todo test ai, paste fork
         final Optional<PasteReply> pasteWithUser = publicPastes.stream().filter(reply -> reply.getUser() != null).findAny();
 
         if (pasteWithUser.isPresent()) {
-            final Set<PasteReply> publicFilteredPastes = session.getPublicPastes(Set.of(new AFilterImpl.UserIdFilterImpl(List.of("filter"), pasteWithUser.get().getUser().getId()))).join();
+            final FilterBuilder filterBuilder = FilterBuilder.newFilterBuilder().
+                userId(pasteWithUser.get().getUser().getId());
+
+            final Set<PasteReply> publicFilteredPastes = session.getPublicPastes(filterBuilder.build()).join();
 
             assertNotNull(publicFilteredPastes);
-            assertTrue(publicFilteredPastes.stream().allMatch(it -> it.getId().equals(pasteWithUser.get().getId())));
+            assertTrue(publicFilteredPastes.stream().allMatch(reply -> reply.getId().equals(pasteWithUser.get().getId())));
 
             if (publicPastes.size() <= publicFilteredPastes.size()) {
                 System.out.println("Something may be wrong with filtering public pastes. Size before filtering: " + publicPastes.size() + ", size after: " + publicFilteredPastes.size());

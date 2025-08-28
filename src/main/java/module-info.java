@@ -3,7 +3,7 @@ open module PastefyAPI.main {
     requires org.jetbrains.annotations;
     requires java.net.http;
     requires org.bouncycastle.provider;
-    requires PastefyAPI.main;
+    // Note for future head scratching: NO 'requires PastefyAPI.main;' does NOT belong here. The IDE just adds it out of spite.
 
     exports de.greensurvivors;
     exports de.greensurvivors.exception;
