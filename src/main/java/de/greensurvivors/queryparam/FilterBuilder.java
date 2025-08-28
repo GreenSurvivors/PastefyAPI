@@ -2,6 +2,7 @@ package de.greensurvivors.queryparam;
 
 import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
+import de.greensurvivors.exception.NestedFilterException;
 import de.greensurvivors.implementation.queryparam.filter.FilterBuilderImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,4 +37,19 @@ public sealed interface FilterBuilder permits FilterBuilderImpl {
     @NotNull FilterBuilder and(@NotNull FilterBuilder other);
 
     @NotNull FilterBuilder or(@NotNull FilterBuilder other);
+
+
+    @NotNull FilterBuilder not(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder isNull(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder notNull(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder greaterThan(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder greaterThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder lowerThan(final @NotNull FilterBuilder other) throws NestedFilterException;
+
+    @NotNull FilterBuilder lowerThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException;
 }
