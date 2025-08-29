@@ -173,7 +173,7 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
     public Timestamp expireAt = null;
     @Column
     @Searchable
-    public Timestamp createdAt;
+    public Timestamp createdAt; // todo
     @Column
     public Timestamp updatedAt;
     protected String cachedContents = null;

@@ -45,7 +45,7 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AQuery
         return new ShortenContentParameterImpl(value);
     }
 
-    static @NotNull SortParameter newSortParameter(final @NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean> value) { // todo builder
+    static @NotNull SortParameter newSortParameter(final @NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean> value) {
         return new SortParameterImpl(value);
     }
 }

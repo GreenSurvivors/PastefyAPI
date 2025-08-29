@@ -35,7 +35,7 @@ public interface Session extends AutoCloseable {
     @NotNull CompletableFuture<@NotNull PasteReply> getPaste(final @NotNull String pasteID);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(); // todo optional parameters -> filters (complex! map String -> ??) <-either not both. filters over filter.> filter (complex! map String -> ?? ) visibility -> Paste.Visibility; encrypted -> bool; createdAt -> ???, userId -> String; starredBy -> String (also userid); encrypted -> bool
+    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes();
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
     @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @NotNull Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
@@ -91,7 +91,7 @@ public interface Session extends AutoCloseable {
 
     // todo can I overwrite the user via formdata filter?
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @NotNull Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters); // todo same as getPastes;; BUT going the userController way may would allow to hide_children, hide_sub_children and hide_pastes get set.
+    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @NotNull Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters); // todo going the userController way may would allow to hide_children, hide_sub_children and hide_pastes get set.
 
     /// Note: needs an api of the user who has created this folder (or is admin)
     /// Also deletes all sub folders and contained pastes recursively.

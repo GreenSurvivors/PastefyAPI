@@ -3,21 +3,33 @@ package de.greensurvivors.implementation.queryparam.filter;
 import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
 import de.greensurvivors.exception.NestedFilterException;
+import de.greensurvivors.exception.UnsupportedFilterException;
 import de.greensurvivors.queryparam.FilterBuilder;
 import de.greensurvivors.queryparam.FilterParameter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+// I really hate how we encode the filter into the url here.
+// it isn't scalable, just the nested encoding takes away so much space;
+// it also results hard to understand code and I can't do much about it...
+// Maybe using the html body for a filter would be feasible since that is somewhat undefined, somewhat supported in the html specs,
+// maybe ditching the GET request and instead fetching everything via POST would be the better alternative,
+// maybe waiting for the QUERY request would be the right call here... I don't know.
+
+// Just wanted to dokument how awful my solution of nesting builders to create the correct paths at the end is,
+// but between everything I have tested so far it is my best way to bundle complex filters,
+// while still keeping the api abstract from the implementation.
+// If you, dear reader, have a bright idea, that does not involve chaining the web api of pastify, please let me know!
 public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike {
     private final @NotNull SequencedMap<@NotNull FilterConnection, @NotNull SequencedSet<@NotNull IFilterLike>> filters = new LinkedHashMap<>();
 
     @Override
-    public @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build() {
+    public @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build() throws UnsupportedFilterException  {
         return this.build(List.of("filter"));
     }
 
-    protected @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build(final @NotNull List<@NotNull String> path) {
+    protected @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build(final @NotNull List<@NotNull String> path) throws UnsupportedFilterException {
         if (filters.isEmpty()) {
             return Collections.emptySortedSet();
         } else if (filters.size() == 1 && filters.get(FilterConnection.EQUALS) != null) {// simple
@@ -29,8 +41,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
                     case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(path));
                     //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                     case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
-                    default -> { // todo throw!!
-                    }
+                    default -> throw new  UnsupportedFilterException ("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
                 }
             }
 
@@ -40,7 +51,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
 
             for (final Map.@NotNull Entry<@NotNull FilterConnection, @NotNull SequencedSet<@NotNull IFilterLike>> entry : filters.sequencedEntrySet()) {
                 final @NotNull List<@NotNull String> deeperPath = new ArrayList<>(path);
-                deeperPath.add(entry.getKey().internalName); // todo is this correct?
+                deeperPath.add(entry.getKey().internalName);
 
                 for (final @NotNull IFilterLike filterLike : entry.getValue()) {
                     switch (filterLike) {
@@ -48,8 +59,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
                         case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(deeperPath));
                         //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                         case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
-                        default -> { // todo throw!!
-                        }
+                        default -> throw new  UnsupportedFilterException ("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
                     }
                 }
             }
@@ -208,7 +218,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
         }
     }
 
-    public enum FilterConnection {
+    protected enum FilterConnection {
         AND("$and"),
         OR("$OR"),
         EQUALS("$EQ"), // gets added in case of pastes automatically!

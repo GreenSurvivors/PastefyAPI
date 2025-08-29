@@ -3,6 +3,7 @@ package de.greensurvivors.queryparam;
 import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
 import de.greensurvivors.exception.NestedFilterException;
+import de.greensurvivors.exception.UnsupportedFilterException;
 import de.greensurvivors.implementation.queryparam.filter.FilterBuilderImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ public sealed interface FilterBuilder permits FilterBuilderImpl {
         return new FilterBuilderImpl();
     }
 
-    @NotNull SequencedSet<@NotNull FilterParameter<?>> build();
+    @NotNull SequencedSet<@NotNull FilterParameter<?>> build() throws UnsupportedFilterException;
 
     @NotNull FilterBuilder pasteVisibility(@NotNull Paste.@NotNull PasteVisibility visibility);
 
