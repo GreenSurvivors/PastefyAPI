@@ -83,7 +83,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @Nullable Set<QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "paste").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -134,7 +134,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "user/starred-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -176,7 +176,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/trending").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -190,7 +190,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/latest").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -226,7 +226,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "folder").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -310,7 +310,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @Nullable Set<@NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters,  "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).

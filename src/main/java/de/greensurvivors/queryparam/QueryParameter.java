@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Set;
 
-public sealed interface QueryParameter<T extends @NotNull Object> permits AQueryParameter, FilterParameter, FilterTagsParameter, HideSubFoldersParameter, PageLimitParameter, PageParameter, SearchParameter, ShortenContentParameter, SortParameter {
+public sealed interface QueryParameter<T extends @NotNull Object> permits AQueryParameter, FilterParameter, FilterTagsParameter, HideSubFoldersParameter, MultiPastePartParameter, PageLimitParameter, PageParameter, SearchParameter, ShortenContentParameter, SortParameter {
     T getValue();
 
     static @NotNull FilterBuilder newFilterBuilder() {
