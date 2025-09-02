@@ -2,6 +2,8 @@ package de.greensurvivors.implementation.queryparam.filter;
 
 import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
+import de.greensurvivors.admin.queryparam.AdminFilterBuilder;
+import de.greensurvivors.admin.queryparam.AuthenticationProvider;
 import de.greensurvivors.exception.NestedFilterException;
 import de.greensurvivors.exception.UnsupportedFilterException;
 import de.greensurvivors.queryparam.FilterBuilder;
@@ -21,7 +23,7 @@ import java.util.*;
 // but between everything I have tested so far it is my best way to bundle complex filters,
 // while still keeping the api abstract from the implementation.
 // If you, dear reader, have a bright idea, that does not involve chaining the web api of pastify, please let me know!
-public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike {
+public non-sealed class AdminFilterBuilderImpl implements AdminFilterBuilder, IFilterLike {
     private final @NotNull SequencedMap<@NotNull FilterConnection, @NotNull SequencedSet<@NotNull IFilterLike>> filters = new LinkedHashMap<>();
 
     @Override
@@ -37,7 +39,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
 
             for (final @NotNull IFilterLike filterLike : filters.get(FilterConnection.EQUALS)) {
                 switch (filterLike) {
-                    case FilterBuilderImpl nestedBuilder -> result.addAll(nestedBuilder.build(path));
+                    case AdminFilterBuilderImpl nestedBuilder -> result.addAll(nestedBuilder.build(path));
                     case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(path));
                     //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                     case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
@@ -55,7 +57,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
 
                 for (final @NotNull IFilterLike filterLike : entry.getValue()) {
                     switch (filterLike) {
-                        case FilterBuilderImpl nestedBuilder -> result.addAll(nestedBuilder.build(deeperPath));
+                        case AdminFilterBuilderImpl nestedBuilder -> result.addAll(nestedBuilder.build(deeperPath));
                         case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(deeperPath));
                         //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                         case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
@@ -69,146 +71,139 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
     }
 
     @Override
-    public @NotNull FilterBuilderImpl pasteVisibility(final @NotNull Paste.@NotNull PasteVisibility visibility) {
+    public @NotNull AdminFilterBuilderImpl pasteVisibility(final @NotNull Paste.@NotNull PasteVisibility visibility) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.PasteVisibilityProtoFilterImpl(visibility));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl isEncrypted(final boolean isEncrypted) {
+    public @NotNull AdminFilterBuilderImpl isEncrypted(final boolean isEncrypted) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.IsEncryptedProtoFilterImpl(isEncrypted));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl pasteFolder(final @NotNull String folderId) {
+    public @NotNull AdminFilterBuilderImpl pasteFolder(final @NotNull String folderId) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.FolderProtoFilterImpl(folderId));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl userId(final @NotNull String userId) {
+    public @NotNull AdminFilterBuilderImpl userId(final @NotNull String userId) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.UserIdProtoFilterImpl(userId));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl forkedFromPaste(final @NotNull String pasteId) {
+    public @NotNull AdminFilterBuilderImpl forkedFromPaste(final @NotNull String pasteId) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.PasteForkedFromProtoFilterImpl(pasteId));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl pasteType(final @NotNull Paste.PasteType pasteType) {
+    public @NotNull AdminFilterBuilderImpl pasteType(final @NotNull Paste.PasteType pasteType) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.PasteTypeProtoFilterImpl(pasteType));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl starredBy(final @NotNull String userId) {
+    public @NotNull AdminFilterBuilderImpl starredBy(final @NotNull String userId) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.StarredByProtoFilterImpl(userId));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl folderParent(final @NotNull String folderId) {
+    public @NotNull AdminFilterBuilderImpl folderParent(final @NotNull String folderId) {
         filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.FolderParentProtoFilterImpl(folderId));
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl accountStatus(final @NotNull AccountStaus accountStaus) {
-        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AProtoFilterImpl.AccountStatusProtoFilterImpl(accountStaus));
+    public @NotNull AdminFilterBuilderImpl and(final @NotNull FilterBuilder other) {
+        filters.computeIfAbsent(FilterConnection.AND, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl and(final @NotNull FilterBuilder other) {
-        filters.computeIfAbsent(FilterConnection.AND, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl or(final @NotNull FilterBuilder other) {
+        filters.computeIfAbsent(FilterConnection.OR, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl or(final @NotNull FilterBuilder other) {
-        filters.computeIfAbsent(FilterConnection.OR, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl not(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
+
+        filters.computeIfAbsent(FilterConnection.NOT, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl not(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl isNull(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.NOT, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
-
-        return this;
-    }
-
-    @Override
-    public @NotNull FilterBuilderImpl isNull(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
-
-        filters.computeIfAbsent(FilterConnection.IS_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+        filters.computeIfAbsent(FilterConnection.IS_NULL, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl notNull(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl notNull(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.NOT_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
-
-        return this;
-    }
-
-    @Override
-    public @NotNull FilterBuilderImpl greaterThan(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
-
-        filters.computeIfAbsent(FilterConnection.GREATER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+        filters.computeIfAbsent(FilterConnection.NOT_NULL, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl greaterThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl greaterThan(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.GREATER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
-
-        return this;
-    }
-
-    @Override
-    public @NotNull FilterBuilderImpl lowerThan(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
-
-        filters.computeIfAbsent(FilterConnection.LOWER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+        filters.computeIfAbsent(FilterConnection.GREATER_THAN, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
-    public @NotNull FilterBuilderImpl lowerThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl) other);
+    public @NotNull AdminFilterBuilderImpl greaterThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.LOWER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
+        filters.computeIfAbsent(FilterConnection.GREATER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
 
         return this;
     }
 
-    protected void validateAllTopLevel(final @NotNull FilterBuilderImpl other) throws NestedFilterException {
+    @Override
+    public @NotNull AdminFilterBuilderImpl lowerThan(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
+
+        filters.computeIfAbsent(FilterConnection.LOWER_THAN, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
+
+        return this;
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilderImpl lowerThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
+        validateAllTopLevel((AdminFilterBuilderImpl) other);
+
+        filters.computeIfAbsent(FilterConnection.LOWER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((AdminFilterBuilderImpl) other);
+
+        return this;
+    }
+
+    protected void validateAllTopLevel(final @NotNull AdminFilterBuilderImpl other) throws NestedFilterException {
         for (SequencedSet<IFilterLike> iFilterLikes : other.filters.values()) {
             for (IFilterLike filterLike : iFilterLikes) {
                 if (filterLike instanceof FilterBuilder) {
@@ -216,6 +211,41 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
                 }
             }
         }
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilder accountStatus(final @NotNull AccountStaus accountStaus) {
+        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AAdminProtoFilterImpl.AccountStatusProtoFilterImpl(accountStaus));
+
+        return this;
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilder authProvider(final @NotNull AuthenticationProvider authProvider) {
+        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AAdminProtoFilterImpl.AuthenticationProviderProtoFilterImpl(authProvider));
+
+        return this;
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilder authId(final @NotNull String authId) {
+        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AAdminProtoFilterImpl.AuthIdProtoFilterImpl(authId));
+
+        return this;
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilder eMailAddress(final @NotNull String eMailAddress) {
+        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AAdminProtoFilterImpl.EMailProtoFilterImpl(eMailAddress));
+
+        return this;
+    }
+
+    @Override
+    public @NotNull AdminFilterBuilder uniqueName(final @NotNull String uniqueName) {
+        filters.computeIfAbsent(FilterConnection.EQUALS, ignored -> new LinkedHashSet<>()).add(new AAdminProtoFilterImpl.UniqueNameProtoFilterImpl(uniqueName));
+
+        return this;
     }
 
     protected enum FilterConnection {

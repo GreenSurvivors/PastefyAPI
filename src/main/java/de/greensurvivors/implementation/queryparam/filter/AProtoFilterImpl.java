@@ -1,6 +1,5 @@
 package de.greensurvivors.implementation.queryparam.filter;
 
-import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
 import de.greensurvivors.implementation.queryparam.AQueryParameter;
 import de.greensurvivors.queryparam.FilterParameter;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFilterLike {
     protected final @NotNull String internalName;
-    private final @NotNull T value;
+    protected final @NotNull T value;
 
     protected AProtoFilterImpl(final @NotNull String internalName, T value) {
         this.internalName = internalName;
@@ -95,7 +94,7 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
         }
     }
 
-    // paste, folder
+    // paste, folder, star
     public static class UserIdProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
         public UserIdProtoFilterImpl(final @NotNull String userId) {
             super("userId", userId);
@@ -143,6 +142,33 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
         }
     }
 
+    // paste
+    public static class ForkedFromPasteIdProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
+
+        protected ForkedFromPasteIdProtoFilterImpl(final @NotNull String forkedFromPasteId) {
+            super("forkedFrom", forkedFromPasteId);
+        }
+
+        @Override
+        public @NotNull String getFormData() {
+            return getValue();
+        }
+    }
+
+    // paste
+    public static class EncryptedProtoFilterImpl extends AProtoFilterImpl<@NotNull Boolean> {
+
+        protected EncryptedProtoFilterImpl(final boolean value) {
+            super("encrypted", value);
+        }
+
+        @Override
+        public @NotNull String getFormData() {
+            return String.valueOf(getValue());
+        }
+    }
+
+
     // folder
     public static class FolderParentProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {
         public FolderParentProtoFilterImpl(final @NotNull String parentId) {
@@ -152,18 +178,6 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
         @Override
         public @NotNull String getFormData() {
             return getValue();
-        }
-    }
-
-    // user
-    public static class AccountStatusProtoFilterImpl extends AProtoFilterImpl<@NotNull AccountStaus> {
-        public AccountStatusProtoFilterImpl(final @NotNull AccountStaus accountStaus) {
-            super("type", accountStaus);
-        }
-
-        @Override
-        public @NotNull String getFormData() {
-            return getValue().name();
         }
     }
 
@@ -182,29 +196,13 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
     @Column(size = 8)
     @Searchable
     @Filterable
-    private String key;
+    private String key; // why da heck would you filter for this instead of search??; maybe useful for filtering stars and Tags, but you can't get the stars directly from web api as far as I know. And filtering a tag for a specific paste id seams backwards; Not implementing this!
     @Column
     @Searchable
     private String title;
     @Column(size = 16777215)
     @Searchable
     private String content;
-    @Column(size = 8)
-    @Filterable
-    private String userId;
-    @Column(size = 8)
-    @Filterable
-    private String forkedFrom;
-    @Column
-    @Filterable
-    private boolean encrypted = false;
-    @Column
-    @Searchable
-    @Filterable
-    private Type type = Type.PASTE;
-    @Column
-    @Filterable
-    private Visibility visibility = Visibility.UNLISTED;
     @Column
     private StorageType storageType = StorageType.DATABASE;
     @Column
@@ -272,25 +270,8 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
     @Searchable
     public String name;
 
-    @Column(size = 33)
-    @Filterable
-    public String uniqueName;
-
-    @Column(name = "email")
-    @Filterable
-    public String eMail;
-
     @Column
     public String avatar;
-
-    @Column(size = 455)
-    @Filterable
-    public String authId;
-
-    @Column
-    @Filterable
-    @Searchable
-    public AuthenticationProvider authProvider;
 
     @Column
     public Timestamp createdAt;

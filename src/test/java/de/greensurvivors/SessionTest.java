@@ -2,6 +2,7 @@ package de.greensurvivors;
 
 import de.greensurvivors.exception.HttpRequestFailedException;
 import de.greensurvivors.queryparam.FilterBuilder;
+import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.junit.jupiter.api.AfterAll;
@@ -488,7 +489,7 @@ public class SessionTest { // todo test ai, paste fork
         final Optional<PasteReply> pasteWithUser = publicPastes.stream().filter(reply -> reply.getUser() != null).findAny();
 
         if (pasteWithUser.isPresent()) {
-            final FilterBuilder filterBuilder = FilterBuilder.newFilterBuilder().
+            final FilterBuilder filterBuilder = QueryParameter.newFilterBuilder().
                 userId(pasteWithUser.get().getUser().getId());
 
             final Set<PasteReply> publicFilteredPastes = session.getPublicPastes(filterBuilder.build()).join();

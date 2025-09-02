@@ -1,6 +1,6 @@
 package de.greensurvivors;
 
-import de.greensurvivors.implementation.SessionImpl;
+import de.greensurvivors.implementation.AdminSessionImpl;
 import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.jetbrains.annotations.NotNull;
@@ -14,19 +14,19 @@ import java.util.concurrent.CompletableFuture;
 public interface Session extends AutoCloseable {
 
     static Session newSession() {
-        return new SessionImpl();
+        return new AdminSessionImpl();
     }
 
     /// Note: there isn't much to keep your api safe, beyond just using TLS (https).
     /// Please change your API on a regular basis!
     static Session newSession(final @Nullable String apiKey) {
-        return new SessionImpl(apiKey);
+        return new AdminSessionImpl(apiKey);
     }
 
     /// Note: there isn't much to keep your api safe, beyond just using TLS (https).
     /// Please change your API on a regular basis!
     static Session newSession(final @NotNull String serverAddress, final @Nullable String apiKey) {
-        return new SessionImpl(serverAddress, apiKey);
+        return new AdminSessionImpl(serverAddress, apiKey);
     }
 
 

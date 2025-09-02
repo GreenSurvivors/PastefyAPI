@@ -1,29 +1,24 @@
 package de.greensurvivors.queryparam;
 
-import de.greensurvivors.AccountStaus;
 import de.greensurvivors.Paste;
+import de.greensurvivors.admin.queryparam.AdminFilterBuilder;
 import de.greensurvivors.exception.NestedFilterException;
 import de.greensurvivors.exception.UnsupportedFilterException;
-import de.greensurvivors.implementation.queryparam.filter.FilterBuilderImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.SequencedSet;
 
-public sealed interface FilterBuilder permits FilterBuilderImpl {
-
-    static FilterBuilder newFilterBuilder() {
-        return new FilterBuilderImpl();
-    }
+public sealed interface FilterBuilder permits AdminFilterBuilder {
 
     @NotNull SequencedSet<@NotNull FilterParameter<?>> build() throws UnsupportedFilterException;
 
-    @NotNull FilterBuilder pasteVisibility(@NotNull Paste.@NotNull PasteVisibility visibility);
+    @NotNull FilterBuilder pasteVisibility(final @NotNull Paste.@NotNull PasteVisibility visibility);
 
-    @NotNull FilterBuilder isEncrypted(boolean isEncrypted);
+    @NotNull FilterBuilder isEncrypted(final boolean isEncrypted);
 
-    @NotNull FilterBuilder pasteFolder(@NotNull String folderId);
+    @NotNull FilterBuilder pasteFolder(final @NotNull String folderId);
 
-    @NotNull FilterBuilder userId(@NotNull String userId);
+    @NotNull FilterBuilder userId(final @NotNull String userId);
 
     @NotNull FilterBuilder forkedFromPaste(final @NotNull String pasteId);
 
@@ -33,11 +28,9 @@ public sealed interface FilterBuilder permits FilterBuilderImpl {
 
     @NotNull FilterBuilder folderParent(final @NotNull String folderId);
 
-    @NotNull FilterBuilder accountStatus(final @NotNull AccountStaus accountStaus);
+    @NotNull FilterBuilder and(final @NotNull FilterBuilder other);
 
-    @NotNull FilterBuilder and(@NotNull FilterBuilder other);
-
-    @NotNull FilterBuilder or(@NotNull FilterBuilder other);
+    @NotNull FilterBuilder or(final @NotNull FilterBuilder other);
 
 
     @NotNull FilterBuilder not(final @NotNull FilterBuilder other) throws NestedFilterException;

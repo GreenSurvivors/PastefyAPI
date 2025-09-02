@@ -37,13 +37,14 @@ import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class SessionImpl implements AdminSession {
+public class AdminSessionImpl implements AdminSession {
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.n").withZone(ZoneOffset.UTC);
     private final @Nullable String apiKey; // personal note: using OAuth2 would be better here!
     private final @NotNull HttpClient httpClient;
     private final @NotNull String baseURL;
     private final @NotNull Gson gson;
 
-    public SessionImpl(final @NotNull String serverAddress, final @Nullable String apiKey) {
+    public AdminSessionImpl(final @NotNull String serverAddress, final @Nullable String apiKey) {
         this.httpClient = HttpClient.newHttpClient();
         this.baseURL = serverAddress + "/api/v2/";
         this.apiKey = apiKey;
@@ -54,11 +55,11 @@ public class SessionImpl implements AdminSession {
             create();
     }
 
-    public SessionImpl(final @Nullable String apiKey) {
+    public AdminSessionImpl(final @Nullable String apiKey) {
         this("https://pastefy.app", apiKey);
     }
 
-    public SessionImpl() {
+    public AdminSessionImpl() {
         this(null);
     }
 
@@ -435,7 +436,6 @@ public class SessionImpl implements AdminSession {
 
     protected static class InstantAdapter extends TypeAdapter<Instant> {
         // TimeStamp - as used by the web api - or Instant, as used by this lib, is always utc.
-        private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.n").withZone(ZoneOffset.UTC);
 
         @Override
         public void write(JsonWriter out, Instant value) throws IOException {
