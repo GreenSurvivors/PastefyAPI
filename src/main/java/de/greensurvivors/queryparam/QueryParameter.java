@@ -1,12 +1,13 @@
 package de.greensurvivors.queryparam;
 
+import de.greensurvivors.admin.queryParam.AdminQueryParameter;
 import de.greensurvivors.implementation.queryparam.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
 
-public sealed interface QueryParameter<T extends @NotNull Object> permits AQueryParameter, FilterParameter, FilterTagsParameter, HideSubFoldersParameter, MultiPastePartParameter, PageLimitParameter, PageParameter, SearchParameter, ShortenContentParameter, SortParameter {
+public sealed interface QueryParameter<T extends @NotNull Object> permits AdminQueryParameter, AQueryParameter, FilterParameter, FilterTagsParameter, HideSubFoldersParameter, MultiPastePartParameter, PageLimitParameter, PageParameter, SearchParameter, ShortenContentParameter, SortParameter {
     T getValue();
 
     static @NotNull FilterBuilder newFilterBuilder() {
