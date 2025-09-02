@@ -37,7 +37,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class SessionImpl implements AdminSession { // todo throw exception for methods that needs a api key and our is null
+public class SessionImpl implements AdminSession {
     private final @Nullable String apiKey; // personal note: using OAuth2 would be better here!
     private final @NotNull HttpClient httpClient;
     private final @NotNull String baseURL;

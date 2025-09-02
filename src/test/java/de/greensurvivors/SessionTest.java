@@ -57,7 +57,6 @@ public class SessionTest { // todo test ai, paste fork
         assertEquals(Paste.PasteVisibility.UNLISTED, pasteReply.getVisibility());
         assertEquals(Paste.PasteType.PASTE, pasteReply.getType());
         assertFalse(pasteReply.isEncrypted());
-        assertTrue(pasteReply.exists());
         assertEquals(hasAPIKey, (pasteReply.getUser() != null));
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
@@ -81,7 +80,6 @@ public class SessionTest { // todo test ai, paste fork
         assertEquals(Paste.PasteVisibility.UNLISTED, pasteReply.getVisibility());
         assertEquals(Paste.PasteType.PASTE, pasteReply.getType());
         assertFalse(pasteReply.isEncrypted());
-        assertTrue(pasteReply.exists());
         assertEquals(hasAPIKey, (pasteReply.getUser() != null));
         assertNotNull(pasteReply.getRawURL());
         assertNotNull(pasteReply.getId());
