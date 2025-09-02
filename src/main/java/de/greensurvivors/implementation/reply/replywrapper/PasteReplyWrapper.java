@@ -1,8 +1,8 @@
 package de.greensurvivors.implementation.reply.replywrapper;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.reply.PasteReply;
 import de.greensurvivors.implementation.reply.PasteReplyImpl;
+import de.greensurvivors.reply.PasteReply;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

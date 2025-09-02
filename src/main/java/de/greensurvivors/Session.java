@@ -25,7 +25,7 @@ public interface Session extends AutoCloseable {
 
     /// Note: there isn't much to keep your api safe, beyond just using TLS (https).
     /// Please change your API on a regular basis!
-    static Session newSession (final @NotNull String serverAddress, final @Nullable String apiKey) {
+    static Session newSession(final @NotNull String serverAddress, final @Nullable String apiKey) {
         return new SessionImpl(serverAddress, apiKey);
     }
 
@@ -78,7 +78,7 @@ public interface Session extends AutoCloseable {
     // not implemented by the web api.
     //@NotNull CompletableFuture<@NotNull Boolean> addFriend(final @NotNull String pasteID, final @NotNull String friendID);
 
-    @NotNull CompletableFuture<@NotNull FolderReply> createFolder (final @NotNull FolderBuilder builder);
+    @NotNull CompletableFuture<@NotNull FolderReply> createFolder(final @NotNull FolderBuilder builder);
 
     @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId);
 
@@ -89,7 +89,7 @@ public interface Session extends AutoCloseable {
     @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders();
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters); // todo going the userController way may would allow to hide_children, hide_sub_children and hide_pastes get set.
+    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     /// Note: needs an api of the user who has created this folder (or is admin)
     /// Also deletes all sub folders and contained pastes recursively.

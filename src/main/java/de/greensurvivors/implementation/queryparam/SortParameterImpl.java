@@ -24,8 +24,8 @@ public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<S
         }
 
         return String.join(",", super.getValue().entrySet().stream().map(sortTypeEntry ->
-                !sortTypeEntry.getValue() ? sortTypeEntry.getKey().getInternalName() + "+" : sortTypeEntry.getKey().getInternalName()
-            ).toArray(String[]::new));
+            !sortTypeEntry.getValue() ? sortTypeEntry.getKey().getInternalName() + "+" : sortTypeEntry.getKey().getInternalName()
+        ).toArray(String[]::new));
     }
 
     // Note: sort just sorts by internal used column.

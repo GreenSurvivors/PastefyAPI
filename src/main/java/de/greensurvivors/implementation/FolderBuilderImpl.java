@@ -10,7 +10,7 @@ public class FolderBuilderImpl implements FolderBuilder {
     @SerializedName("parent")
     private @Nullable String parentId = null;
 
-    public FolderBuilderImpl (final @NotNull String name) {
+    public FolderBuilderImpl(final @NotNull String name) {
         this.name = name;
     }
 

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class SuccessReply {
-    protected final boolean success;
+    protected final boolean success; /// always true, as far as I know.
 
     protected SuccessReply(boolean success) {
         this.success = success;

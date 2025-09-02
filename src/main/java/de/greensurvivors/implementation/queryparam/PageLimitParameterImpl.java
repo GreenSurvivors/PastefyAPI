@@ -9,7 +9,7 @@ public non-sealed class PageLimitParameterImpl extends AQueryParameter<@NotNull 
     }
 
     @Override
-    public @NotNull String getFormData()  throws IllegalArgumentException {
+    public @NotNull String getFormData() throws IllegalArgumentException {
         if (getValue() < 0) {
             throw new IllegalArgumentException("Page number (" + getValue() + ") lower than 0: ");
         }

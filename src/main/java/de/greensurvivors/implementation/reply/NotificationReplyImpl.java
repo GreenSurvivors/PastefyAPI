@@ -27,9 +27,9 @@ public class NotificationReplyImpl implements NotificationReply {
     private final @Nullable Instant updatedAt;
 
     private NotificationReplyImpl(int id, @NotNull String message, @NotNull String userId,
-                                 @NotNull String url, boolean alreadyRead,
-                                 boolean received, @NotNull Instant createdAt,
-                                 @Nullable Instant updatedAt) {
+                                  @NotNull String url, boolean alreadyRead,
+                                  boolean received, @NotNull Instant createdAt,
+                                  @Nullable Instant updatedAt) {
         this.id = id;
         this.message = message;
         this.userId = userId;

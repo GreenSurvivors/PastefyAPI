@@ -10,11 +10,11 @@ public interface UserEditBuilder {
         return new UserEditBuilderImpl();
     }
 
-    @NotNull UserEditBuilder setName (final @Nullable String newName);
+    @NotNull UserEditBuilder setName(final @Nullable String newName);
 
     @Nullable String getNewName();
 
-    @NotNull UserEditBuilder setUniqueName (final @Nullable String newUniqueName);
+    @NotNull UserEditBuilder setUniqueName(final @Nullable String newUniqueName);
 
     @Nullable String getNewUniqueName();
 

@@ -22,12 +22,12 @@ public class StatsReplyImpl implements StatsReply {
     @SerializedName("s3pastes")
     private final int s3pasteCount;
 
-    private StatsReplyImpl(int createdPatesCount,
-                          int pastesWithOwnersCount,
-                          int userCount, int tagCount,
-                          int folderCount,
-                          int indexedPastesCount,
-                          int s3pasteCount) {
+    private StatsReplyImpl(final int createdPatesCount,
+                           final int pastesWithOwnersCount,
+                           final int userCount, int tagCount,
+                           final int folderCount,
+                           final int indexedPastesCount,
+                           final int s3pasteCount) {
         this.createdPatesCount = createdPatesCount;
         this.pastesWithOwnersCount = pastesWithOwnersCount;
         this.userCount = userCount;

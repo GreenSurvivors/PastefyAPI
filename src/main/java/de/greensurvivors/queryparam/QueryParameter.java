@@ -25,7 +25,7 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AQuery
         return new HideSubFoldersParameterImpl(value);
     }
 
-    static @NotNull PageLimitParameter newPageLimitParameter (final int value){
+    static @NotNull PageLimitParameter newPageLimitParameter(final int value) {
         return new PageLimitParameterImpl(value);
     }
 
@@ -33,7 +33,7 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AQuery
         return new PageParameterImpl(value);
     }
 
-    static @NotNull SearchParameter newSearchParameter (final @NotNull String value) {
+    static @NotNull SearchParameter newSearchParameter(final @NotNull String value) {
         return new SearchParameterImpl(value);
     }
 

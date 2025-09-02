@@ -22,12 +22,12 @@ public class PlatformInfoReplyImpl implements PlatformInfoReply {
     @SerializedName("custom_footer")
     private final @NotNull Map<@NotNull String, @NotNull String> customFooter;
 
-    private PlatformInfoReplyImpl(boolean arePublicPastesEnabled,
-                                 boolean isLoginRequiredForRead,
-                                 boolean isLoginRequiredForWrite,
-                                 boolean isEncryptedByDefault,
-                                 boolean isAIEnabled,
-                                 @NotNull Map<@NotNull String, @NotNull String> customFooter) {
+    private PlatformInfoReplyImpl(final boolean arePublicPastesEnabled,
+                                  final boolean isLoginRequiredForRead,
+                                  final boolean isLoginRequiredForWrite,
+                                  final boolean isEncryptedByDefault,
+                                  final boolean isAIEnabled,
+                                  final @NotNull Map<@NotNull String, @NotNull String> customFooter) {
         this.arePublicPastesEnabled = arePublicPastesEnabled;
         this.isLoginRequiredForRead = isLoginRequiredForRead;
         this.isLoginRequiredForWrite = isLoginRequiredForWrite;

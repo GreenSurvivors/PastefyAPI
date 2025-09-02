@@ -17,7 +17,7 @@ import java.util.Map;
 public class BundledContentImpl<T> implements PasteContent.BundledContent<T> {
     private final @NotNull Map<@NotNull String, @NotNull PasteContent<@NotNull T>> contentMap = new LinkedHashMap<>();
 
-    public static @NotNull Map<@NotNull String, @NotNull String> decode (final @NotNull String strToDecode) {
+    public static @NotNull Map<@NotNull String, @NotNull String> decode(final @NotNull String strToDecode) {
         JsonObject obj = JsonParser.parseString(strToDecode).getAsJsonObject();
         Map<String, String> result = new LinkedHashMap<>();
 

@@ -26,12 +26,12 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
 
     public abstract @NotNull String getFormData();
 
-    public @NotNull FilterImpl build (final @NotNull List<@NotNull String> path) {
+    public @NotNull FilterImpl build(final @NotNull List<@NotNull String> path) {
         return new FilterImpl(joinPath(path, internalName), value);
     }
 
     @VisibleForTesting
-    public static @NotNull String joinPath (final @NotNull List<@NotNull String> path, final @NotNull String name) {
+    public static @NotNull String joinPath(final @NotNull List<@NotNull String> path, final @NotNull String name) {
         StringBuilder builder = new StringBuilder(URLEncoder.encode(name, StandardCharsets.UTF_8));
 
         if (!path.isEmpty()) {
@@ -67,7 +67,7 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
 
         @Override
         public @NotNull String getFormData() {
-            return getValue().name(); // todo ?
+            return getValue().name();
         }
     }
 
@@ -173,7 +173,7 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
     public Timestamp expireAt = null;
     @Column
     @Searchable
-    public Timestamp createdAt; // todo
+    public Timestamp createdAt; // todo this is used in backend but also not Marked as filterable. Does it work? And if yes the annotations are broken.
     @Column
     public Timestamp updatedAt;
     protected String cachedContents = null;

@@ -22,5 +22,5 @@ public abstract non-sealed class AQueryParameter<T extends @NotNull Object> impl
         return value;
     }
 
-    public abstract @NotNull String getFormData() ;
+    public abstract @NotNull String getFormData();
 }

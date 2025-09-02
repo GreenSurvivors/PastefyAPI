@@ -18,9 +18,9 @@ public class PublicUserReplyImpl implements PublicUserReply {
     @SerializedName("display_name")
     private final String displayName;
 
-    private PublicUserReplyImpl(@NotNull String id, @NotNull String name,
-                               @NotNull String avatarURL,
-                               String displayName) {
+    private PublicUserReplyImpl(final @NotNull String id, final @NotNull String name,
+                                final @NotNull String avatarURL,
+                                final String displayName) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;

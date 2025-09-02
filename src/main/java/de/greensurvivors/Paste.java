@@ -8,15 +8,22 @@ import java.time.Instant;
 import java.util.Collection;
 
 public interface Paste<T> {
-    @NotNull PasteType getType ();
-    @Nullable String getTitle ();
+    @NotNull PasteType getType();
+
+    @Nullable String getTitle();
+
     @NotNull T getContent();
+
     @NotNull PasteVisibility getVisibility();
-    boolean isEncrypted ();
+
+    boolean isEncrypted();
+
     @Nullable Instant getExpirationTime();
+
     @NotNull Collection<String> getTags();
 
     @Nullable String getFolderId();
+
     @Nullable String getPasteIdForkedFrom();
 
     static <T> PasteBuilder<T> newBuilder(@NotNull PasteContent<@NotNull T> content) {

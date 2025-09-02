@@ -5,7 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import de.greensurvivors.*;
+import de.greensurvivors.FolderBuilder;
+import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.admin.AdminSession;
 import de.greensurvivors.admin.AdminUserReply;
 import de.greensurvivors.admin.UserEditBuilder;
@@ -30,7 +31,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -296,7 +299,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead(){
+    public @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead() {
         final HttpRequest request = createRequestBuilder(null, "user/notification/readall").GET().build(); // why not POST??
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
@@ -311,7 +314,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
 
     @Override
     public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
-        final HttpRequest request = createRequestBuilder(queryParameters,  "public/tags").GET().build();
+        final HttpRequest request = createRequestBuilder(queryParameters, "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(TagReplyImpl[].class)).
@@ -356,7 +359,7 @@ public class SessionImpl implements AdminSession { // todo throw exception for m
     @Override
     public @NotNull CompletableFuture<@NotNull AdminUserReply> getUser(final @NotNull String userId) {
         final HttpRequest request = createRequestBuilder(null, "admin/users", userId).GET().build();
-                
+
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(AdminUserReply.class));
     }

@@ -63,11 +63,11 @@ public final class EncryptionHelper {
             salt);
     }
 
-    private static byte @NotNull [] hashPasskeyRaw (final byte @NotNull [] passkey,
-                                            final int pwAlgoType, final int pwAlgoVersion,
-                                            final int pwAlgoIterations, final int pwAlgoMemory, final int pwAlgoParallelism,
-                                            final int keySize,
-                                            final byte @NotNull [] salt) {
+    private static byte @NotNull [] hashPasskeyRaw(final byte @NotNull [] passkey,
+                                                   final int pwAlgoType, final int pwAlgoVersion,
+                                                   final int pwAlgoIterations, final int pwAlgoMemory, final int pwAlgoParallelism,
+                                                   final int keySize,
+                                                   final byte @NotNull [] salt) {
         // prepare password hashing via argon2-id
         // https://ssojet.com/compare-hashing-algorithms/sha-256-vs-argon2/
         final Argon2Parameters argon2Parameters = new Argon2Parameters.Builder(pwAlgoType)
@@ -89,7 +89,7 @@ public final class EncryptionHelper {
         return hashKey;
     }
 
-    public static @NotNull String encrypt (final @NotNull String content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
+    public static @NotNull String encrypt(final @NotNull String content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
         // get bytes as fast as possible bytes
         final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
         final String encrypted = encrypt(bytes, hashedPasskey);
@@ -98,7 +98,7 @@ public final class EncryptionHelper {
         return encrypted;
     }
 
-    public static @NotNull String encrypt (final byte @NotNull [] content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
+    public static @NotNull String encrypt(final byte @NotNull [] content, final @NotNull HashedPasskey hashedPasskey) throws NoSuchAlgorithmException, InvalidCipherTextException {
         final KeyParameter encodeKeyParameter = new KeyParameter(hashedPasskey.hash());
 
         // generate a random nonce
@@ -141,7 +141,7 @@ public final class EncryptionHelper {
     }
 
     /// does NOT clear passkey array. Please do it yourself via EncryptionHelper.clearArray(passkey);
-    public static @NotNull String decrypt (final @NotNull String encryptedData, final byte @NotNull [] passkey) throws InvalidCipherTextException {
+    public static @NotNull String decrypt(final @NotNull String encryptedData, final byte @NotNull [] passkey) throws InvalidCipherTextException {
         Map<String, Object> decodeInMap = gson.fromJson(encryptedData, TypeToken.getParameterized(LinkedHashMap.class, String.class, Object.class).getType());
 
         final byte[] decodeKey = EncryptionHelper.hashPasskeyRaw(
@@ -156,9 +156,9 @@ public final class EncryptionHelper {
         );
         final KeyParameter decodekeyParameter = new KeyParameter(decodeKey);
 
-        final byte[] decodeCipherTextData = b64decoder.decode((String)decodeInMap.get("data"));
+        final byte[] decodeCipherTextData = b64decoder.decode((String) decodeInMap.get("data"));
 
-        final byte[] decodeNonce = b64decoder.decode((String)decodeInMap.get("cipherIV"));
+        final byte[] decodeNonce = b64decoder.decode((String) decodeInMap.get("cipherIV"));
 
         final AEADCipher cipher = new GCMSIVBlockCipher();
         cipher.init(false, new AEADParameters(decodekeyParameter, ((Number) decodeInMap.get("cipherMacSize")).intValue() * 8, decodeNonce));
@@ -176,7 +176,7 @@ public final class EncryptionHelper {
         }
     }
 
-    public record HashedPasskey(byte [] hash,
+    public record HashedPasskey(byte[] hash,
                                 int pwAlgoType, int pwAlgoVersion,
                                 int pwAlgoIterations, int pwAlgoMemory, int pwAlgoParallelism,
                                 int keySize,

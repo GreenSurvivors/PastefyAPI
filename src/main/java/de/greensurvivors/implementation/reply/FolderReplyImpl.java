@@ -21,14 +21,14 @@ public class FolderReplyImpl implements FolderReply {
     private final @NotNull Set<@NotNull PasteReplyImpl> pastes;
     @SerializedName("created_at")
     private final @NotNull Instant createdAt;
-    private final boolean exists;
+    private final boolean exists; /// always true
 
     private FolderReplyImpl(@NotNull String id, @NotNull String name,
-                           @Nullable String userId,
-                           @NotNull Set<@NotNull FolderReplyImpl> subFolders,
-                           @NotNull Set<@NotNull PasteReplyImpl> pastes,
-                           @NotNull Instant createdAt,
-                           boolean exists) {
+                            @Nullable String userId,
+                            @NotNull Set<@NotNull FolderReplyImpl> subFolders,
+                            @NotNull Set<@NotNull PasteReplyImpl> pastes,
+                            @NotNull Instant createdAt,
+                            boolean exists) {
         this.id = id;
         this.name = name;
         this.userId = userId;
@@ -64,11 +64,6 @@ public class FolderReplyImpl implements FolderReply {
     }
 
     @Override
-    public boolean exists() {
-        return exists;
-    }
-
-    @Override
     public @NotNull String getName() {
         return name;
     }
@@ -83,13 +78,12 @@ public class FolderReplyImpl implements FolderReply {
             Objects.equals(this.userId, that.userId) &&
             Objects.equals(this.subFolders, that.subFolders) &&
             Objects.equals(this.pastes, that.pastes) &&
-            Objects.equals(this.createdAt, that.createdAt) &&
-            this.exists == that.exists;
+            Objects.equals(this.createdAt, that.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, userId, subFolders, pastes, createdAt, exists);
+        return Objects.hash(id, name, userId, subFolders, pastes, createdAt);
     }
 
     @Override
@@ -100,7 +94,6 @@ public class FolderReplyImpl implements FolderReply {
             "userId=" + userId + ", " +
             "subFolders=" + subFolders + ", " +
             "pastes=" + pastes + ", " +
-            "createdAt=" + createdAt + ", " +
-            "exists=" + exists + ']';
+            "createdAt=" + createdAt + ']';
     }
 }

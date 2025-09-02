@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.Paste;
 import de.greensurvivors.PasteBuilder;
 import de.greensurvivors.PasteContent;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -39,7 +38,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
     @SerializedName("ai")
     private boolean useAI = false;
 
-    public PasteBuilderImpl (final @NotNull PasteContent<@NotNull T> content) {
+    public PasteBuilderImpl(final @NotNull PasteContent<@NotNull T> content) {
         this.content = content;
     }
 
@@ -114,7 +113,7 @@ public final class PasteBuilderImpl<T> implements PasteBuilder<T> {
 
     @Override
     public @NotNull PasteBuilder<T> addTag(final @NotNull String tag) {
-        if (tags == Collections.EMPTY_LIST){
+        if (tags == Collections.EMPTY_LIST) {
             tags = new LinkedHashSet<>();
         }
 

@@ -25,7 +25,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
     private final @NotNull SequencedMap<@NotNull FilterConnection, @NotNull SequencedSet<@NotNull IFilterLike>> filters = new LinkedHashMap<>();
 
     @Override
-    public @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build() throws UnsupportedFilterException  {
+    public @NotNull SequencedSet<@NotNull FilterParameter<? extends @NotNull Object>> build() throws UnsupportedFilterException {
         return this.build(List.of("filter"));
     }
 
@@ -41,7 +41,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
                     case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(path));
                     //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                     case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
-                    default -> throw new  UnsupportedFilterException ("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
+                    default -> throw new UnsupportedFilterException("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
                 }
             }
 
@@ -59,7 +59,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
                         case AProtoFilterImpl<?> protoFilter -> result.add(protoFilter.build(deeperPath));
                         //noinspection rawtypes - note: the compiler doesn't accept the correct 'AProtoFilterImpl<?>.FilterImpl filter -> result.add(filter);'
                         case AProtoFilterImpl.FilterImpl filter -> result.add(filter); // how???
-                        default -> throw new  UnsupportedFilterException ("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
+                        default -> throw new UnsupportedFilterException("Encountered filterLike of type " + filterLike.getClass() + ", but I don't know how to build it!");
                     }
                 }
             }
@@ -133,77 +133,77 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
 
     @Override
     public @NotNull FilterBuilderImpl and(final @NotNull FilterBuilder other) {
-        filters.computeIfAbsent(FilterConnection.AND, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.AND, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl or(final @NotNull FilterBuilder other) {
-        filters.computeIfAbsent(FilterConnection.OR, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.OR, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl not(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.NOT, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.NOT, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl isNull(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.IS_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.IS_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl notNull(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.NOT_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.NOT_NULL, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl greaterThan(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.GREATER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.GREATER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl greaterThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.GREATER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.GREATER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl lowerThan(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.LOWER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.LOWER_THAN, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
 
     @Override
     public @NotNull FilterBuilderImpl lowerThenOrEquals(final @NotNull FilterBuilder other) throws NestedFilterException {
-        validateAllTopLevel((FilterBuilderImpl)other);
+        validateAllTopLevel((FilterBuilderImpl) other);
 
-        filters.computeIfAbsent(FilterConnection.LOWER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl)other);
+        filters.computeIfAbsent(FilterConnection.LOWER_THAN_EQUALS, ignored -> new LinkedHashSet<>()).add((FilterBuilderImpl) other);
 
         return this;
     }
@@ -221,7 +221,7 @@ public non-sealed class FilterBuilderImpl implements FilterBuilder, IFilterLike 
     protected enum FilterConnection {
         AND("$and"),
         OR("$OR"),
-        EQUALS("$EQ"), // gets added in case of pastes automatically!
+        EQUALS("$EQ"), // gets added in case of pastes automatically, and not needed for folders!
         NOT("$ne"),
         IS_NULL("$null"),
         NOT_NULL("$notNull"),

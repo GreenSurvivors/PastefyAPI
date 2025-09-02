@@ -8,7 +8,7 @@ import java.time.Instant;
 
 public interface AdminUserReply extends PublicUserReply {
     /// interaapps, google, github,  twitch, oidc aka custom, discord
-    @NotNull String AuthenticationProviderName ();
+    @NotNull String AuthenticationProviderName();
 
     @NotNull AccountStaus getStatus();
 

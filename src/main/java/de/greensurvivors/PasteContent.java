@@ -17,9 +17,9 @@ import java.util.Map;
 public interface PasteContent<T extends @NotNull Object> {
     T getContent();
 
-    @NotNull Paste.PasteType getPasteType ();
+    @NotNull Paste.PasteType getPasteType();
 
-    @NotNull String serialize () throws IOException;
+    @NotNull String serialize() throws IOException;
 
     static @NotNull SimpleStringContent fromString(final @NotNull String content) {
         return new SimpleStringContentImpl(content);
@@ -30,12 +30,12 @@ public interface PasteContent<T extends @NotNull Object> {
     }
 
     /// note: creating a PasteBuilder with this encrypted content will NOT set the encrypted flag!
-    static @NotNull SimpleStringContent enctypt (final byte @NotNull [] content, final byte @NotNull [] password) throws NoSuchAlgorithmException, InvalidCipherTextException {
+    static @NotNull SimpleStringContent encryptNow(final byte @NotNull [] content, final byte @NotNull [] password) throws NoSuchAlgorithmException, InvalidCipherTextException {
         return new SimpleStringContentImpl(EncryptionHelper.encrypt(content, EncryptionHelper.hashPasskey(password)));
     }
 
     /// note: creating a PasteBuilder with this encrypted content will NOT set the encrypted flag!
-    static @NotNull SimpleStringContent enctypt (final @NotNull String content, final byte @NotNull [] password) throws NoSuchAlgorithmException, InvalidCipherTextException {
+    static @NotNull SimpleStringContent encryptNow(final @NotNull String content, final byte @NotNull [] password) throws NoSuchAlgorithmException, InvalidCipherTextException {
         return new SimpleStringContentImpl(EncryptionHelper.encrypt(content, EncryptionHelper.hashPasskey(password)));
     }
 

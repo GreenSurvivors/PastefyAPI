@@ -33,7 +33,7 @@ public class PasteReplyImpl implements PasteReply {
     private final @Nullable String pasteIdForkedFrom;
 
     private final @NotNull String id;
-    private final boolean exists;
+    private final boolean exists; // I really have no idea why the api has this field, if the api answers with status code 404 if a paste doesn't exist...
     @SerializedName("raw_url")
     private final @NotNull URI rawURL;
     @SerializedName("created_at")
@@ -142,7 +142,7 @@ public class PasteReplyImpl implements PasteReply {
     }
 
     @Override
-    public @NotNull PasteReply decrypt(final byte @NotNull [] password) throws InvalidCipherTextException {
+    public void decrypt(final byte @NotNull [] password) throws InvalidCipherTextException {
         if (this.getTitle() != null && !this.getTitle().isBlank()) {
             this.title = EncryptionHelper.decrypt(this.getTitle(), password);
         }
@@ -150,11 +150,6 @@ public class PasteReplyImpl implements PasteReply {
 
         EncryptionHelper.clearArray(password);
 
-        return this;
-    }
-
-    public boolean exists() {
-        return exists;
     }
 
     @Override
@@ -162,7 +157,7 @@ public class PasteReplyImpl implements PasteReply {
         final SimpleStringContentImpl pasteContent = (SimpleStringContentImpl) PasteContent.fromString(content);
         pasteContent.setPasteType(type);
 
-        return ((PasteBuilderImpl<String>)Paste.newBuilder(pasteContent)).
+        return ((PasteBuilderImpl<String>) Paste.newBuilder(pasteContent)).
             setEncryptionOverwrite(isEncrypted).
             setTitle(title).
             setVisibility(visibility).
@@ -182,13 +177,12 @@ public class PasteReplyImpl implements PasteReply {
             "expirationTime=" + expirationTime + ", " +
             "tags=" + tags + ", " +
             "folderId=" + folderId + ", " +
-            "pasteIdForkedFrom=" + pasteIdForkedFrom +", " +
+            "pasteIdForkedFrom=" + pasteIdForkedFrom + ", " +
             "id=" + id + ", " +
-            "exists=" + exists +", " +
             "rawURL=" + rawURL + ", " +
-            "createdAt=" + createdAt +", " +
+            "createdAt=" + createdAt + ", " +
             "user=" + user + ", " +
-            "folderId=" + folderId +", " +
+            "folderId=" + folderId + ", " +
             "isStarred=" + isStarred + ']';
     }
 }

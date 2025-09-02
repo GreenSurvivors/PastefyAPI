@@ -10,7 +10,7 @@ public class ErrorReply {
     @SerializedName("exception")
     private final @NotNull String exceptionName; // simple exception name
 
-    private ErrorReply(final boolean success,final boolean exists, final @NotNull String exceptionName) {
+    private ErrorReply(final boolean success, final boolean exists, final @NotNull String exceptionName) {
         this.success = success;
         this.exists = exists;
         this.exceptionName = exceptionName;

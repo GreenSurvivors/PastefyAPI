@@ -33,11 +33,11 @@ public class PrivateUserReplyImpl implements PrivateUserReply {
     @SerializedName("auth_types")
     private final @NotNull Set<@NotNull String> availableProviderNames;
 
-    private PrivateUserReplyImpl(@NotNull String id, @NotNull String name,
-                                @NotNull String avatarURL, @NotNull String displayName,
-                                @NotNull String authenticationProviderName, @NotNull AccountStaus accountStaus,
-                                @NotNull Set<@NotNull String> availableProviderNames,
-                                boolean isLoggedIn, @Nullable String favoriteColor) {
+    private PrivateUserReplyImpl(final @NotNull String id, final @NotNull String name,
+                                 final @NotNull String avatarURL, final @NotNull String displayName,
+                                 final @NotNull String authenticationProviderName, final @NotNull AccountStaus accountStaus,
+                                 final @NotNull Set<@NotNull String> availableProviderNames,
+                                 final boolean isLoggedIn, final @Nullable String favoriteColor) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;

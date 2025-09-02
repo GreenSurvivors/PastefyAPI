@@ -1,8 +1,8 @@
 package de.greensurvivors.implementation.reply.replywrapper;
 
 import com.google.gson.annotations.SerializedName;
-import de.greensurvivors.reply.FolderReply;
 import de.greensurvivors.implementation.reply.FolderReplyImpl;
+import de.greensurvivors.reply.FolderReply;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

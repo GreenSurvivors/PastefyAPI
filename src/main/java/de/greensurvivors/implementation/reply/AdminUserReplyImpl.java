@@ -29,13 +29,14 @@ public class AdminUserReplyImpl implements AdminUserReply {
     @SerializedName("updated_at")
     private final @NotNull Instant lastUpdatedAt;
 
-    private AdminUserReplyImpl(@NotNull String id, @NotNull String name,
-                              @NotNull String avatarURL,
-                              @NotNull String displayName,
-                              @NotNull String authenticationProviderName,
-                              @NotNull AccountStaus accountStaus,
-                              @NotNull Instant createdAt,
-                              @NotNull Instant lastUpdatedAt) {
+    private AdminUserReplyImpl(final @NotNull String id,
+                               final @NotNull String name,
+                               final @NotNull String avatarURL,
+                               final @NotNull String displayName,
+                               final @NotNull String authenticationProviderName,
+                               final @NotNull AccountStaus accountStaus,
+                               final @NotNull Instant createdAt,
+                               final @NotNull Instant lastUpdatedAt) {
         this.id = id;
         this.name = name;
         this.avatarURL = avatarURL;
