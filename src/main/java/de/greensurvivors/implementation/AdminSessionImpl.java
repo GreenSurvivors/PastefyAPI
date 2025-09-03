@@ -18,7 +18,6 @@ import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -31,9 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -82,17 +79,17 @@ public class AdminSessionImpl implements AdminSession {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPastes() {
         return getPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "paste").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
@@ -133,73 +130,73 @@ public class AdminSessionImpl implements AdminSession {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMyStarredPastes() {
         return getMyStarredPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMyStarredPastes(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "user/starred-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMySharedPastes() {
         return getMySharedPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMySharedPastes(final @Nullable Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "user/sharedpastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPublicPastes() {
         return getPublicPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes(@Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> parameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPublicPastes(@Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> parameters) {
         final HttpRequest request = createRequestBuilder(parameters, "public-pastes").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getTrendingPastes() {
         return getTrendingPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getTrendingPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/trending").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getLatestPastes() {
         return getLatestPastes(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getLatestPastes(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "public-pastes/latest").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(PasteReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
@@ -225,17 +222,17 @@ public class AdminSessionImpl implements AdminSession {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull FolderReply>> getFolders() {
         return getFolders(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull FolderReply>> getFolders(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "folder").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(FolderReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
@@ -273,12 +270,12 @@ public class AdminSessionImpl implements AdminSession {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull String>> getMyAPIKeys() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull String>> getMyAPIKeys() {
         final HttpRequest request = createRequestBuilder(null, "user/keys").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(String[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
@@ -309,17 +306,17 @@ public class AdminSessionImpl implements AdminSession {
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags() {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull TagReply>> getAllTags() {
         return getAllTags(null);
     }
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull TagReply>> getAllTags(final @Nullable Set<? extends @NotNull QueryParameter<?>> queryParameters) {
         final HttpRequest request = createRequestBuilder(queryParameters, "public/tags").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(TagReplyImpl[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override
@@ -349,12 +346,17 @@ public class AdminSessionImpl implements AdminSession {
     // ADMIN API BELOW! DANGER! NO DUCKS ALLOWED!
 
     @Override
-    public @NotNull CompletableFuture<@NotNull Set<@NotNull AdminUserReply>> getUsers() {
-        final HttpRequest request = createRequestBuilder(null, "admin/users").GET().build();
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull AdminUserReply>> getUsers() {
+        return getUsers(null);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull AdminUserReply>> getUsers(final @Nullable Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters) {
+        final HttpRequest request = createRequestBuilder(queryParameters, "admin/users").GET().build();
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).
             thenApply(deserializeBody(AdminUserReply[].class)).
-            thenApply(Set::of);
+            thenApply(array -> new LinkedHashSet<>(Arrays.asList(array)));
     }
 
     @Override

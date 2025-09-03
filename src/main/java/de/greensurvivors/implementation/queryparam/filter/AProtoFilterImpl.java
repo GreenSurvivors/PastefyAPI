@@ -6,8 +6,8 @@ import de.greensurvivors.queryparam.FilterParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFilterLike {
@@ -31,16 +31,15 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
 
     @VisibleForTesting
     public static @NotNull String joinPath(final @NotNull List<@NotNull String> path, final @NotNull String name) {
-        StringBuilder builder = new StringBuilder(URLEncoder.encode(name, StandardCharsets.UTF_8));
+        final @NotNull List<@NotNull String> extendedPath = new ArrayList<>(path.size() + 1);
+        extendedPath.addAll(path);
+        extendedPath.add(name);
 
-        if (!path.isEmpty()) {
-            // reverse pass through the path
-            for (final @NotNull String pathPart : path.reversed()) {
-                // pathPart[<builder contents until now>]
-                builder.insert(0, '[').
-                    insert(0, URLEncoder.encode(pathPart, StandardCharsets.UTF_8)).
-                    append(']');
-            }
+        final @NotNull Iterator<@NotNull String> pathIterator = extendedPath.iterator();
+        final @NotNull StringBuilder builder = new StringBuilder(pathIterator.next());
+
+        while (pathIterator.hasNext()) {
+            builder.append('[').append(pathIterator.next()).append(']');
         }
 
         return builder.toString();
@@ -167,7 +166,6 @@ public abstract class AProtoFilterImpl<T extends @NotNull Object> implements IFi
             return String.valueOf(getValue());
         }
     }
-
 
     // folder
     public static class FolderParentProtoFilterImpl extends AProtoFilterImpl<@NotNull String> {

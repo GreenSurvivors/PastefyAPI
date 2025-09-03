@@ -5,9 +5,9 @@ import de.greensurvivors.queryparam.QueryParameter;
 import de.greensurvivors.reply.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,10 +35,11 @@ public interface Session extends AutoCloseable {
     @NotNull CompletableFuture<@NotNull PasteReply> getPaste(final @NotNull String pasteID);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPastes();
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull PasteReply>> getPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    /// non-admin users have access to all public pastes, own pastes or all pastes starred by the user
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     @NotNull <T> CompletableFuture<@NotNull Boolean> editPaste(final @NotNull String pasteID, final @NotNull PasteBuilder<T> builder);
 
@@ -52,28 +53,28 @@ public interface Session extends AutoCloseable {
     @NotNull CompletableFuture<@NotNull Boolean> unstarPaste(final @NotNull String pasteID);
 
     /// needs an api key. obviously.
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMyStarredPastes();
 
     /// needs an api key. obviously.
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMyStarredPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMyStarredPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     /// needs an api key. obviously.
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMySharedPastes();
 
     /// needs an api key. obviously.
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getMySharedPastes(final @NotNull Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getMySharedPastes(final @NotNull Set<@NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPublicPastes();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getPublicPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getPublicPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getTrendingPastes();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getTrendingPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getTrendingPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getLatestPastes();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull PasteReply>> getLatestPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull PasteReply>> getLatestPastes(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     // not implemented by the web api.
     //@NotNull CompletableFuture<@NotNull Boolean> addFriend(final @NotNull String pasteID, final @NotNull String friendID);
@@ -86,10 +87,10 @@ public interface Session extends AutoCloseable {
     @NotNull CompletableFuture<@NotNull FolderReply> getFolder(final @NotNull String folderId, final @NotNull Set<? extends @NotNull QueryParameter<?>> queryParameters);
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull FolderReply>> getFolders();
 
     /// needs an api key, if webservice is configured so - and pastify.app is.
-    @NotNull CompletableFuture<@NotNull @Unmodifiable Set<@NotNull FolderReply>> getFolders(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull FolderReply>> getFolders(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     /// Note: needs an api of the user who has created this folder (or is admin)
     /// Also deletes all sub folders and contained pastes recursively.
@@ -102,7 +103,7 @@ public interface Session extends AutoCloseable {
 
     @NotNull CompletableFuture<@NotNull String> createNewAPIKey();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull String>> getMyAPIKeys();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull String>> getMyAPIKeys();
 
     @NotNull CompletableFuture<@NotNull Boolean> deleteAPIKey(final @NotNull String keyToDelete);
 
@@ -110,9 +111,9 @@ public interface Session extends AutoCloseable {
 
     @NotNull CompletableFuture<@NotNull Boolean> markAllNotificationsRead();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags();
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull TagReply>> getAllTags();
 
-    @NotNull CompletableFuture<@NotNull Set<@NotNull TagReply>> getAllTags(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
+    @NotNull CompletableFuture<@NotNull SequencedSet<@NotNull TagReply>> getAllTags(final @NotNull Set<? extends @NotNull QueryParameter<? extends @NotNull Object>> queryParameters);
 
     @NotNull CompletableFuture<@NotNull TagReply> getTag(final @NotNull String tag);
 

@@ -21,7 +21,8 @@ public class FolderReplyImpl implements FolderReply {
     private final @NotNull Set<@NotNull PasteReplyImpl> pastes;
     @SerializedName("created_at")
     private final @NotNull Instant createdAt;
-    private final boolean exists; /// always true
+    /// always true
+    private final boolean exists;
 
     private FolderReplyImpl(@NotNull String id, @NotNull String name,
                             @Nullable String userId,

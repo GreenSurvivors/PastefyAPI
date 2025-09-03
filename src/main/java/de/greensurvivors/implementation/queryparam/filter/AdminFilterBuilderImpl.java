@@ -18,6 +18,7 @@ import java.util.*;
 // Maybe using the html body for a filter would be feasible since that is somewhat undefined, somewhat supported in the html specs,
 // maybe ditching the GET request and instead fetching everything via POST would be the better alternative,
 // maybe waiting for the QUERY request would be the right call here... I don't know.
+// It even could help, if the json-filters parameters would work for everything and not just Pastes
 
 // Just wanted to dokument how awful my solution of nesting builders to create the correct paths at the end is,
 // but between everything I have tested so far it is my best way to bundle complex filters,
@@ -53,7 +54,9 @@ public non-sealed class AdminFilterBuilderImpl implements AdminFilterBuilder, IF
 
             for (final Map.@NotNull Entry<@NotNull FilterConnection, @NotNull SequencedSet<@NotNull IFilterLike>> entry : filters.sequencedEntrySet()) {
                 final @NotNull List<@NotNull String> deeperPath = new ArrayList<>(path);
-                deeperPath.add(entry.getKey().internalName);
+                if (entry.getKey() != FilterConnection.EQUALS) {
+                    deeperPath.add(entry.getKey().internalName);
+                }
 
                 for (final @NotNull IFilterLike filterLike : entry.getValue()) {
                     switch (filterLike) {
@@ -250,8 +253,8 @@ public non-sealed class AdminFilterBuilderImpl implements AdminFilterBuilder, IF
 
     protected enum FilterConnection {
         AND("$and"),
-        OR("$OR"),
-        EQUALS("$EQ"), // gets added in case of pastes automatically, and not needed for folders!
+        OR("$or"),
+        EQUALS("$eq"), // gets added in case of pastes automatically, and not needed for folders!
         NOT("$ne"),
         IS_NULL("$null"),
         NOT_NULL("$notNull"),

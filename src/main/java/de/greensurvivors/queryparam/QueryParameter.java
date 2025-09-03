@@ -62,7 +62,8 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AdminQ
         return new ShortenContentParameterImpl(value);
     }
 
-    static @NotNull SortParameter newSortParameter(final @NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean> value) {
+    /// the boolean is true == ascending, false == descending (default)
+    static @NotNull SortParameter newSortParameter(final @NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean> value) { // todo a SortBuilder could be nice
         return new SortParameterImpl(value);
     }
 }
