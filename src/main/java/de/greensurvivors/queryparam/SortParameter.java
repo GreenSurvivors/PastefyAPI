@@ -1,11 +1,11 @@
 package de.greensurvivors.queryparam;
 
-import de.greensurvivors.implementation.queryparam.SortParameterImpl;
+import de.greensurvivors.admin.queryparam.AdminSortParameter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public sealed interface SortParameter extends QueryParameter<@NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean>> permits SortParameterImpl {
+public sealed interface SortParameter extends QueryParameter<@NotNull Map<? extends SortParameter.@NotNull SortType, @NotNull Boolean>> permits AdminSortParameter {
     abstract class SortType {
         protected final @NotNull String internalName;
 
@@ -25,8 +25,8 @@ public sealed interface SortParameter extends QueryParameter<@NotNull Map<SortPa
         public static final SortType ID_USER = new SortType("userId") {}; // paste, folder, authkey
         public static final SortType ID_FORKED_FROM = new SortType("forkedFrom") {}; // paste
         public static final SortType ENCRYPTED = new SortType("encrypted") {}; // paste
-        public static final SortType PASTE_TYPE = new SortType("type") {}; // paste // todo
-        public static final SortType VISIBILITY = new SortType("visibility") {}; // paste // todo
+        public static final SortType PASTE_TYPE = new SortType("type") {}; // paste
+        public static final SortType VISIBILITY = new SortType("visibility") {}; // paste
         public static final SortType FOLDER = new SortType("folder") {}; // paste
         public static final SortType PARENT_FOLDER = new SortType("parent") {}; // folder
         public static final SortType TIME_UPDATED = new SortType("updatedAt") {}; // folder, authkey, user

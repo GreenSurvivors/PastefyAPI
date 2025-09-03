@@ -63,7 +63,7 @@ public sealed interface QueryParameter<T extends @NotNull Object> permits AdminQ
     }
 
     /// the boolean is true == ascending, false == descending (default)
-    static @NotNull SortParameter newSortParameter(final @NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean> value) { // todo a SortBuilder could be nice
+    static @NotNull SortParameter newSortParameter(final @NotNull Map<? extends SortParameter.@NotNull SortType, @NotNull Boolean> value) { // todo a SortBuilder could be nice
         return new SortParameterImpl(value);
     }
 }

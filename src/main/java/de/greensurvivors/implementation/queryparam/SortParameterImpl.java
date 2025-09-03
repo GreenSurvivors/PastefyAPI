@@ -1,19 +1,20 @@
 package de.greensurvivors.implementation.queryparam;
 
+import de.greensurvivors.admin.queryparam.AdminSortParameter;
 import de.greensurvivors.queryparam.SortParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Map;
 
-public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<SortParameter.@NotNull SortType, @NotNull Boolean>> implements SortParameter {
-    public SortParameterImpl(final @NotNull Map<@NotNull SortType, Boolean> value) {
+public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<? extends SortParameter.@NotNull SortType, @NotNull Boolean>> implements AdminSortParameter {
+    public SortParameterImpl(final @NotNull Map<? extends @NotNull SortType, Boolean> value) {
         super("sort", value);
     }
 
     // return an unmodifiable copy
     @Override
-    public @NotNull @Unmodifiable Map<@NotNull SortType, Boolean> getValue() {
+    public @NotNull @Unmodifiable Map<? extends @NotNull SortType, Boolean> getValue() {
         return Map.copyOf(super.getValue());
     }
 
@@ -42,12 +43,6 @@ public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<S
     @Searchable
     @Filterable
     private String key;
-    @Column(size = 16777215)
-    @Searchable
-    private String content;
-    private StorageType storageType = StorageType.DATABASE;
-    @Column
-    private Integer version = 0;
     @Column
     private Boolean indexedInElastic = false;
      */
@@ -80,9 +75,6 @@ public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<S
     public String refreshToken;
 
     @Column
-    public Type type = Type.USER;
-
-    @Column
     private AbstractArray scopes;
     */
 
@@ -91,29 +83,7 @@ public non-sealed class SortParameterImpl extends AQueryParameter<@NotNull Map<S
     @Column(size = 8, id = true)
     public String id;
 
-    @Column(size = 33)
-    @Filterable
-    public String uniqueName;
-
-    @Column(name = "email")
-    @Filterable
-    public String eMail;
-
     @Column
     public String avatar;
-
-    @Column(size = 455)
-    @Filterable
-    public String authId;
-
-    @Column
-    @Filterable
-    @Searchable
-    public AuthenticationProvider authProvider;
-
-    @Column
-    @Filterable
-    @Searchable
-    public Type type = Type.USER;
     */
 }
